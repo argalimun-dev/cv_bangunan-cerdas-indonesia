@@ -8,7 +8,7 @@ export default function AboutPage() {
       phone: "089680858462",
       waLink: "https://wa.me/6289680858462",
       email: "arga.limun@gmail.com",
-      role: "Pengembang Utama & Integrator",
+      role: "Marketing & Administrator",
     },
     {
       name: "Tim CV. Bangunan Cerdas Indonesia",
@@ -22,7 +22,7 @@ export default function AboutPage() {
       phone: null,
       waLink: null,
       email: "faridfarhan444@gmail.com",
-      role: "Dosen Pembimbing",
+      role: "Pengembang Utama & Integrator",
     },
   ];
 
@@ -32,7 +32,7 @@ export default function AboutPage() {
 
         {/* TITLE */}
         <h1 className="text-3xl md:text-4xl font-bold text-center text-white tracking-tight">
-          Tentang Proyek
+          Tentang Kami
         </h1>
 
         {/* DESCRIPTION BLOCK */}
@@ -41,7 +41,7 @@ export default function AboutPage() {
           <p className="text-lg">
             <strong className="text-white">CV. Bangunan Cerdas Indonesia</strong> adalah konsultan dan kontraktor listrik berbasis 
             <em> Project Based Learning</em> yang berfokus pada implementasi sistem integrasi bangunan cerdas.
-            Website ini dirancang sebagai galeri digital interaktif untuk menampilkan, menyimpan
+            Website ini dirancang sebagai <strong className="text-white">galeri pemasaran digital interaktif</strong> untuk menampilkan, menyimpan
             dan mendokumentasikan berbagai <em>Project</em> yang terkait Smart Building.
           </p>
 
@@ -63,9 +63,9 @@ export default function AboutPage() {
           <ul className="space-y-3 text-gray-300 text-lg">
             {teamMembers.map((member, idx) => {
               // Tentukan ikon
-              let icon = "👨‍💻"; // default
+              let icon = "👨🏽‍💼🤝"; // default
               if (!member.phone && !member.email) icon = "🏗️";
-              else if (!member.phone && member.email) icon = "💡";
+              else if (!member.phone && member.email) icon = "👨🏽‍💻💡";
 
               return (
                 <li key={idx}>

@@ -32,28 +32,45 @@ export default function HomePage() {
           max-w-2xl mt-6 mb-10 leading-relaxed
         "
       >
-        Platform dokumentasi Project warga{" "}
+        Platform Galeri Pemasaran Digital {" "}
         <span className="text-sky-400 font-medium">
           CV. Bangunan Cerdas Indonesia
         </span>
         . <br />
-        Simpan, kelola dan tampilkan Project berharga dengan tampilan modern ✨
+        Simpan, kelola dan tampilkan setiap Project dengan tampilan modern ✨
       </p>
 
       {/* 🚀 CTA */}
-      <Link
-        href="/memory"
-        className="
-          px-8 py-3 
-          rounded-xl text-lg font-medium 
-          bg-sky-600 hover:bg-sky-500 
-          transition-all duration-200 
-          shadow-lg hover:shadow-sky-600/30 
-          transform hover:scale-[1.04] active:scale-[0.98]
-        "
-      >
-        🚀 Buka Smart Project Wall
-      </Link>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Link
+          href="/memory"
+          className="
+            px-8 py-3 
+            rounded-xl text-lg font-medium 
+            bg-sky-600 hover:bg-sky-500 
+            transition-all duration-200 
+            shadow-lg hover:shadow-sky-600/30 
+            transform hover:scale-[1.04] active:scale-[0.98]
+          "
+        >
+          🚀 Smart Project Wall
+        </Link>
+
+        {/* ✨ Tombol Baru */}
+        <Link
+          href="/about"
+          className="
+            px-8 py-3 
+            rounded-xl text-lg font-medium 
+            bg-green-600 hover:bg-green-500 
+            transition-all duration-200 
+            shadow-lg hover:shadow-green-600/30 
+            transform hover:scale-[1.04] active:scale-[0.98]
+          "
+        >
+          📞 Bebaslah Bertanya
+        </Link>
+      </div>
     </main>
   );
 }

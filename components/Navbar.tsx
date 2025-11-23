@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+
+// Import logo dari lib/assets
+import logo from "@/lib/assets/logo.png";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,18 +20,28 @@ export default function Navbar() {
     ">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        {/* Logo */}
-        <div>
-          <Link
-            href="/"
-            className="font-semibold text-lg text-gray-50 hover:text-sky-400 transition-colors"
-          >
-            CV. Bangunan Cerdas Indonesia
+        {/* Logo + Teks */}
+        <div className="flex items-center gap-4">
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0">
+            <Image
+              src={logo}
+              alt="Logo Proyek"
+              width={120}
+              height={40}
+              className="w-[80px] sm:w-[100px] md:w-[120px] h-auto transition-all"
+            />
           </Link>
 
-          <p className="text-xs text-gray-400">
-            Pemasangan Sistem Integrasi Bangunan Cerdas
-          </p>
+          {/* Teks di sebelah kanan logo */}
+          <div className="flex flex-col">
+            <span className="font-semibold text-lg text-gray-50 hover:text-sky-400 transition-colors truncate">
+              CV. Bangunan Cerdas Indonesia
+            </span>
+            <p className="text-xs text-gray-400 truncate mt-0.5">
+              Pemasangan Sistem Integrasi Bangunan Cerdas
+            </p>
+          </div>
         </div>
 
         {/* Mobile Toggle */}
