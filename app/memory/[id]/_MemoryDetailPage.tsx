@@ -204,11 +204,12 @@ export default function MemoryDetailPage() {
             className="rounded-2xl bg-white/5 border border-white/10 cursor-zoom-in shadow-xl p-2 flex items-center justify-center"
             role="button"
             onClick={() => setIsFullscreen(true)}
+            aria-label="Perbesar gambar"
           >
             <img
               loading="eager"
               src={memory.image_url}
-              alt={memory.title}
+              alt={memory.title || "Gambar Project CV. Bangunan Cerdas Indonesia"}
               className="w-full object-contain max-h-[320px] md:max-h-[360px] rounded-xl bg-black/20 backdrop-blur-sm"
             />
           </div>
@@ -239,6 +240,7 @@ export default function MemoryDetailPage() {
             <button
               onClick={() => commentRef.current?.openModal()}
               className="hover:underline"
+              aria-label="Buka komentar"
             >
               Komentar
             </button>
@@ -252,6 +254,7 @@ export default function MemoryDetailPage() {
                 setShowEditModal(true);
               }}
               className="hover:underline text-sky-300"
+              aria-label="Sunting project"
             >
               Sunting
             </button>
@@ -259,6 +262,7 @@ export default function MemoryDetailPage() {
             <button
               onClick={() => setShowDeleteModal(true)}
               className="hover:underline text-red-400"
+              aria-label="Hapus project"
             >
               Hapus
             </button>

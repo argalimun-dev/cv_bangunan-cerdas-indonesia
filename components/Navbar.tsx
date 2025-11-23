@@ -26,7 +26,7 @@ export default function Navbar() {
           <Link href="/" className="flex-shrink-0">
             <Image
               src={logo}
-              alt="Logo Proyek"
+              alt="Logo CV. Bangunan Cerdas Indonesia"
               width={120}
               height={40}
               className="w-[60px] sm:w-[80px] md:w-[120px] h-auto transition-all"
