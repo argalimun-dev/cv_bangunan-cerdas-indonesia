@@ -18,10 +18,10 @@ export default function Navbar() {
       border-b border-white/5
       shadow-[0_2px_15px_rgba(0,0,0,0.25)]
     ">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
 
         {/* Logo + Teks */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <Image
@@ -29,16 +29,16 @@ export default function Navbar() {
               alt="Logo Proyek"
               width={120}
               height={40}
-              className="w-[80px] sm:w-[100px] md:w-[120px] h-auto transition-all"
+              className="w-[60px] sm:w-[80px] md:w-[120px] h-auto transition-all"
             />
           </Link>
 
           {/* Teks di sebelah kanan logo */}
           <div className="flex flex-col">
-            <span className="font-semibold text-lg text-gray-50 hover:text-sky-400 transition-colors truncate">
+            <span className="font-semibold text-sm sm:text-lg text-gray-50 hover:text-sky-400 transition-colors truncate">
               CV. Bangunan Cerdas Indonesia
             </span>
-            <p className="text-xs text-gray-400 truncate mt-0.5">
+            <p className="text-[10px] sm:text-xs text-gray-400 truncate mt-0.5">
               Pemasangan Sistem Integrasi Bangunan Cerdas
             </p>
           </div>

@@ -1,5 +1,7 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
+import logo from "@/lib/assets/logo.png"; // pastikan path benar
 
 export default function AboutPage() {
   const teamMembers = [
@@ -30,19 +32,30 @@ export default function AboutPage() {
     <main className="min-h-screen px-4 sm:px-6 py-14">
       <div className="max-w-3xl mx-auto space-y-10">
 
+        {/* HERO LOGO */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src={logo}
+            alt="Logo CV. Bangunan Cerdas Indonesia"
+            width={600}
+            height={600}
+            className="object-contain max-w-full h-auto"
+          />
+        </div>
+
         {/* TITLE */}
         <h1 className="text-3xl md:text-4xl font-bold text-center text-white tracking-tight">
           Tentang Kami
         </h1>
 
         {/* DESCRIPTION BLOCK */}
-        <section className="space-y-6 text-gray-300 leading-relaxed">
+        <section className="space-y-6 text-gray-300 leading-relaxed text-justify">
 
           <p className="text-lg">
             <strong className="text-white">CV. Bangunan Cerdas Indonesia</strong> adalah konsultan dan kontraktor listrik berbasis 
             <em> Project Based Learning</em> yang berfokus pada implementasi sistem integrasi bangunan cerdas.
-            Website ini dirancang sebagai <strong className="text-white">galeri pemasaran digital interaktif</strong> untuk menampilkan, menyimpan
-            dan mendokumentasikan berbagai <em>Project</em> yang terkait Smart Building.
+            Website ini dirancang sebagai <strong className="text-white">Galeri Pemasaran Digital Interaktif</strong> untuk menampilkan, menyimpan
+            dan mendokumentasikan berbagai <em>Project</em> terkait Smart Building.
           </p>
 
           <p className="text-lg">
@@ -62,7 +75,6 @@ export default function AboutPage() {
 
           <ul className="space-y-3 text-gray-300 text-lg">
             {teamMembers.map((member, idx) => {
-              // Tentukan ikon
               let icon = "👨🏽‍💼🤝"; // default
               if (!member.phone && !member.email) icon = "🏗️";
               else if (!member.phone && member.email) icon = "👨🏽‍💻💡";

@@ -32,11 +32,11 @@ export default function HomePage() {
           max-w-2xl mt-6 mb-10 leading-relaxed
         "
       >
-        Platform Galeri Pemasaran Digital {" "}
+        Platform Galeri Pemasaran Digital <br />
         <span className="text-sky-400 font-medium">
           CV. Bangunan Cerdas Indonesia
         </span>
-        . <br />
+         <br />
         Simpan, kelola dan tampilkan setiap Project dengan tampilan modern ✨
       </p>
 
