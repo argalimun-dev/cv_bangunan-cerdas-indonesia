@@ -3,7 +3,7 @@ import { useState, FormEvent, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function NewMemoryPage() {
+export default function MemoryCreatePage() {
   const router = useRouter();
 
   const [file, setFile] = useState<File | null>(null);
@@ -56,14 +56,13 @@ export default function NewMemoryPage() {
       }
 
       // SANITASI NAMA FILE
-      const fileName = `${Date.now()}-${file.name
-        .toLowerCase()
-        .replace(/[^a-z0-9.\-_]/g, "_")}`;
+      const sanitized = file.name.toLowerCase().replace(/[^a-z0-9.\-_]/g, "_");
+      const fileName = `${Date.now()}-${sanitized}`;
 
-      // UPLOAD GAMBAR
+      // UPLOAD
       const { error: uploadError } = await supabase.storage
         .from("images")
-        .upload(fileName, file, { upsert: false });
+        .upload(fileName, file);
 
       if (uploadError) {
         alert("❌ Gagal upload gambar!");
@@ -75,7 +74,7 @@ export default function NewMemoryPage() {
       const { data } = supabase.storage.from("images").getPublicUrl(fileName);
       const imageUrl = data?.publicUrl || "";
 
-      // SIMPAN DATABASE
+      // INSERT
       const { error: insertError } = await supabase.from("memories").insert([
         {
           title,
@@ -100,105 +99,92 @@ export default function NewMemoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-950 to-black text-gray-100 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-xl bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-gray-700">
-        <h1 className="text-3xl font-bold text-center mb-6 text-blue-400 drop-shadow-md">
-          Tambah Project Baru 🌤️
+    <div className="w-full px-4 py-10">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-2xl font-semibold text-gray-200 mb-6">
+          Tambah Project Baru
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl"
+        >
           {/* Judul */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Judul Project
-            </label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-400">Judul Project</label>
             <input
               type="text"
               placeholder="Contoh: Kesetrum"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Deskripsi */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Deskripsi
-            </label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-400">Deskripsi</label>
             <textarea
-              placeholder="Tuliskan cerita singkat tentang Project ini..."
+              placeholder="Tuliskan cerita singkat..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:ring-2 focus:ring-blue-400 focus:outline-none resize-none"
               rows={3}
+              className="bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           {/* Gambar */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Unggah Gambar
-            </label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-400">Unggah Gambar</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="w-full text-sm text-gray-300 
-                file:mr-4 file:py-2 file:px-4 
-                file:rounded-lg file:border-0 
-                file:text-sm file:font-semibold 
-                file:bg-blue-100 file:text-blue-700 
-                hover:file:bg-blue-200 cursor-pointer
-                file:transition-all"
+              className="text-gray-300 file:bg-gray-800 file:border-0 
+                file:px-4 file:py-2 file:rounded-lg file:cursor-pointer
+                hover:file:bg-gray-700 transition"
             />
           </div>
 
           {/* Uploader */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Nama Pengunggah
-            </label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-400">Nama Pengunggah</label>
             <input
               type="text"
               placeholder="Anda ingin disebut apa"
               value={uploader}
               onChange={(e) => setUploader(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* Kode Rahasia */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Kode Rahasia (khusus tim)
-            </label>
+          {/* Kode */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-gray-400">Kode Rahasia</label>
             <input
               type="password"
-              placeholder="Masukkan kode rahasia..."
+              placeholder="Masukkan kode..."
               value={secretCode}
               onChange={(e) => setSecretCode(e.target.value)}
-              className="w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 shadow-md disabled:opacity-70"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-medium disabled:opacity-70"
           >
-            {loading ? "Mengunggah..." : "💾 Simpan Project"}
+            {loading ? "Mengunggah..." : "Simpan Project"}
           </button>
         </form>
 
-        <div className="flex justify-center items-center mt-6 text-sm">
-          <button
-            onClick={() => router.push("/memory")}
-            className="text-sm text-gray-400 hover:text-gray-200 underline"
-          >
-            ← Kembali ke Smart Project Wall
-          </button>
-        </div>
+        <button
+          onClick={() => router.push("/memory")}
+          className="mt-6 text-sm text-gray-400 hover:text-gray-200 underline"
+        >
+          ← Kembali ke Smart Project Wall
+        </button>
       </div>
     </div>
   );

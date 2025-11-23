@@ -12,14 +12,18 @@ export default function MemoryCard({ id, title, description, src }: MemoryCardPr
   return (
     <Link
       href={`/memory/${id}`}
-      className="block" // PATCH: stabil click-area di semua browser
+      className="block group" 
+      // PATCH: group → enable hover effects sinkron untuk konten dalam card
     >
       <div
         className="
-          bg-gradient-to-b from-gray-800 to-gray-900 
-          rounded-xl overflow-hidden shadow-md 
-          transition-transform duration-200 
-          hover:scale-[1.03] active:scale-[0.98]  // PATCH: lebih smooth di mobile
+          bg-gray-800/60 backdrop-blur-sm 
+          border border-gray-700/50
+          rounded-2xl overflow-hidden 
+          shadow-md 
+          transition-all duration-200 
+          group-hover:shadow-lg
+          hover:scale-[1.02] active:scale-[0.98] 
         "
       >
         <div className="relative w-full h-64">
@@ -27,16 +31,24 @@ export default function MemoryCard({ id, title, description, src }: MemoryCardPr
             src={src}
             alt={title}
             fill
-            className="object-cover"
+            className="
+              object-cover 
+              transition-transform duration-300 
+              group-hover:scale-105 
+              // PATCH: zoom ringan saat hover seperti galeri modern
+            "
             sizes="(max-width: 768px) 100vw, 50vw"
-            priority={false} // PATCH: explicit, supaya tidak dianggap "auto priority"
+            priority={false}
           />
         </div>
 
         <div className="p-4 text-white">
-          <h3 className="text-lg font-semibold truncate">{title}</h3>
+          <h3 className="text-lg font-semibold truncate">
+            {title}
+          </h3>
+
           <p className="text-gray-300 text-sm line-clamp-2">
-            {description || "Tidak ada deskripsi." /* PATCH: safe fallback */}
+            {description || "Tidak ada deskripsi."}
           </p>
         </div>
       </div>

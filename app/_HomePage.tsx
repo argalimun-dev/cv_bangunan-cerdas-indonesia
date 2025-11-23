@@ -5,47 +5,54 @@ export default function HomePage() {
   return (
     <main
       className="
-        min-h-screen w-full 
-        flex flex-col justify-center items-center
-        text-center px-6
-        bg-gradient-to-b from-gray-900 via-gray-950 to-black 
-        text-gray-100 bg-fixed
+        flex flex-col items-center justify-center 
+        min-h-[80vh] w-full 
+        px-6 text-center 
+        animate-fadeIn
       "
     >
-      {/* Judul utama */}
+      {/* 🌟 HEADLINE */}
       <h1
         className="
-          text-5xl md:text-7xl font-extrabold 
-          mb-8 pb-3 max-w-screen-sm select-none
-          bg-gradient-to-r from-blue-400 to-purple-400 
-          text-transparent bg-clip-text 
-          tracking-tight leading-[1.15] drop-shadow-2xl
+          text-4xl sm:text-6xl md:text-7xl 
+          font-semibold tracking-tight 
+          bg-gradient-to-r from-sky-400 to-blue-500 
+          bg-clip-text text-transparent 
+          drop-shadow-xl select-none
+          max-w-3xl leading-[1.15]
         "
       >
         Selamat Datang di Smart Project Wall
       </h1>
 
-      {/* Deskripsi */}
-      <p className="text-gray-400 text-lg max-w-2xl mb-10 leading-relaxed">
-        Platform dokumentasi untuk warga{" "}
-        <span className="text-blue-400 font-semibold">
+      {/* ✨ Subheadline */}
+      <p
+        className="
+          text-gray-400 text-base sm:text-lg 
+          max-w-2xl mt-6 mb-10 leading-relaxed
+        "
+      >
+        Platform dokumentasi Project warga{" "}
+        <span className="text-sky-400 font-medium">
           CV. Bangunan Cerdas Indonesia
         </span>
         . <br />
-        Simpan dan bagikan Project berharga dalam perjalanan kalian ✨
+        Simpan, kelola dan tampilkan Project berharga dengan tampilan modern ✨
       </p>
 
-      {/* Tombol */}
+      {/* 🚀 CTA */}
       <Link
         href="/memory"
         className="
-          bg-blue-600 hover:bg-blue-700 
-          text-white text-lg font-medium
-          px-8 py-3 rounded-xl 
-          shadow-lg transition transform hover:scale-105
+          px-8 py-3 
+          rounded-xl text-lg font-medium 
+          bg-sky-600 hover:bg-sky-500 
+          transition-all duration-200 
+          shadow-lg hover:shadow-sky-600/30 
+          transform hover:scale-[1.04] active:scale-[0.98]
         "
       >
-        🚀 Masuk ke Smart Project Wall
+        🚀 Buka Smart Project Wall
       </Link>
     </main>
   );

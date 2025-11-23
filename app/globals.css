@@ -1,60 +1,114 @@
-/* app/globals.css */
+/* =========================================================
+   GLOBALS.CSS — PREMIUM DARK THEME (Geist Sans + Sky Accent)
+   ========================================================= */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ========== GLOBAL RESET & BASE SETTINGS ========== */
+/* =======================
+   FONT IMPORT (GEIST SANS)
+   ======================= */
+
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('/fonts/GeistVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* =======================
+   DESIGN TOKENS (THEME)
+   ======================= */
+
+:root {
+  /* Color System */
+  --bg: #0f172a; /* Navy deep background */
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+
+  /* Accent — SKY 400 */
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+
+  /* Shadows */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  /* Radius */
+  --radius: 1rem; /* 16px — premium rounded */
+}
+
+/* =======================
+   BASE RESET
+   ======================= */
 
 html,
 body {
   margin: 0;
   padding: 0;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
 
-  /* Hindari gradient double-render (RootLayout sudah punya gradient) */
-  background: #020617;
-  color: #e2e8f0;
+  background: var(--bg);
+  color: var(--text-primary);
 
   min-height: 100vh;
 
-  /* Smooth text rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Prevent unwanted horizontal scroll */
   overflow-x: hidden;
 }
 
-/* Default link behavior */
+/* Anchor */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* Box model stabilizer */
+/* Box model */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* ========== ANIMATIONS ========== */
+/* =======================
+   UTILITY CLASSES
+   ======================= */
 
-/* Zoom In */
-@keyframes zoomIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* Card Base (optional utility) */
+.card-base {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(6px);
 }
 
-.animate-zoomIn {
-  animation: zoomIn 0.3s ease-out;
+/* Input base */
+.input-base {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  outline: none;
 }
+
+.input-base:focus {
+  border-color: var(--accent);
+}
+
+/* =======================
+   ANIMATIONS (Premium)
+   ======================= */
 
 /* Fade In */
 @keyframes fadeIn {
@@ -67,5 +121,21 @@ a {
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Zoom In (Modal) */
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoomIn {
+  animation: zoomIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }

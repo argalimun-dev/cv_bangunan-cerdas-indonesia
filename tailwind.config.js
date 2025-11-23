@@ -8,7 +8,10 @@ module.exports = {
 
   theme: {
     extend: {
-      // Kamu bebas menambah custom theme di sini nantinya
+      fontFamily: {
+        geist: ['"Geist Sans"', "sans-serif"],
+      },
+      // Tambahkan custom token lain di sini nanti
     },
   },
 

@@ -11,22 +11,20 @@ import EditModal from "@/components/EditModal";
 export default function MemoryDetailPage() {
   const router = useRouter();
   const params = useParams();
-
-  // FIX: Next.js sometimes returns array
-  const memoryId =
-    Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const memoryId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const commentRef = useRef<CommentSectionRef>(null);
+
+  const [initialComments, setInitialComments] = useState<any[]>([]);
+  const [deviceIdentity, setDeviceIdentity] = useState<string>("");
 
   const [memory, setMemory] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [secretCode, setSecretCode] = useState("");
   const [deleting, setDeleting] = useState(false);
 
-  // Edit modal
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -34,37 +32,64 @@ export default function MemoryDetailPage() {
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [editLoading, setEditLoading] = useState(false);
 
-  // Fullscreen viewer
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Fetch memory
+  // Generate deviceIdentity
+  useEffect(() => {
+    let id = localStorage.getItem("deviceIdentity");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("deviceIdentity", id);
+    }
+    setDeviceIdentity(id);
+  }, []);
+
+  // Fetch memory + comments + reply_comments
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await supabase
+      if (!memoryId) return;
+
+      const { data: mem } = await supabase
         .from("memories")
         .select("*")
         .eq("id", memoryId)
         .single();
+      setMemory(mem);
 
-      setMemory(data);
+      const { data: comments } = await supabase
+        .from("comments")
+        .select("*")
+        .eq("memory_id", memoryId)
+        .order("created_at", { ascending: true });
+
+      const { data: replies } = await supabase
+        .from("reply_comments")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      // Gabungkan reply ke comments flat
+      const allComments = [
+        ...(comments || []),
+        ...(replies?.map((r: any) => ({ ...r, parent_id: r.parent_comment_id })) || []),
+      ];
+
+      setInitialComments(allComments);
       setLoading(false);
     };
 
-    if (memoryId) fetchData();
+    fetchData();
   }, [memoryId]);
 
-  // DELETE HANDLER
+  // DELETE MEMORY
   const handleDelete = async () => {
     if (!secretCode.trim()) return alert("Masukkan kode rahasia!");
     if (!memory) return;
 
-    const check = confirm("⚠️ Yakin ingin menghapus Project ini?");
-    if (!check) return;
+    if (!confirm("⚠️ Yakin ingin menghapus Project ini?")) return;
 
     try {
       setDeleting(true);
 
-      // Validate code
       const { data: validCode, error: codeErr } = await supabase
         .from("access_codes")
         .select("*")
@@ -77,26 +102,22 @@ export default function MemoryDetailPage() {
         return;
       }
 
-      // Delete comments first
       await supabase.from("comments").delete().eq("memory_id", memory.id);
+      await supabase.from("reply_comments").delete().in("parent_comment_id", (await supabase
+        .from("comments")
+        .select("id")
+        .eq("memory_id", memory.id)).data?.map((c: any) => c.id) || []);
 
-      // Delete image from storage
-      const imagePath = memory.image_url?.split(
-        "/storage/v1/object/public/images/"
-      )[1];
+      const imagePath = memory.image_url?.split("/storage/v1/object/public/images/")[1];
+      if (imagePath) await supabase.storage.from("images").remove([imagePath]);
 
-      if (imagePath) {
-        await supabase.storage.from("images").remove([imagePath]);
-      }
-
-      // Delete memory
       await supabase.from("memories").delete().eq("id", memory.id);
 
       alert("Project berhasil dihapus!");
       router.push("/memory");
       router.refresh();
     } catch {
-      alert("Terjadi kesalahan saat menghapus!");
+      alert("Kesalahan saat menghapus!");
     } finally {
       setDeleting(false);
       setShowDeleteModal(false);
@@ -104,7 +125,7 @@ export default function MemoryDetailPage() {
     }
   };
 
-  // UPDATE HANDLER
+  // UPDATE MEMORY
   const handleUpdateMemory = async () => {
     if (!memory) return;
     setEditLoading(true);
@@ -112,31 +133,21 @@ export default function MemoryDetailPage() {
     try {
       let imageUrl = memory.image_url;
 
-      // Upload new image if exists
       if (editImageFile) {
-        const oldPath = memory.image_url?.split(
-          "/storage/v1/object/public/images/"
-        )[1];
-
+        const oldPath = memory.image_url?.split("/storage/v1/object/public/images/")[1];
         const ext = editImageFile.name.split(".").pop();
         const fileName = `${memory.id}-${Date.now()}.${ext}`;
 
         const { error: uploadError } = await supabase.storage
           .from("images")
           .upload(fileName, editImageFile, { upsert: true });
-
         if (uploadError) throw uploadError;
 
         imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
 
-        if (oldPath) {
-          await supabase.storage.from("images")
-            .remove([oldPath])
-            .catch(() => {});
-        }
+        if (oldPath) await supabase.storage.from("images").remove([oldPath]).catch(() => {});
       }
 
-      // Update DB
       const { error } = await supabase
         .from("memories")
         .update({
@@ -149,7 +160,6 @@ export default function MemoryDetailPage() {
 
       if (error) throw error;
 
-      // Update local state
       setMemory({
         ...memory,
         title: editTitle,
@@ -168,64 +178,72 @@ export default function MemoryDetailPage() {
     }
   };
 
-  if (loading) return <p className="text-white p-6">Loading...</p>;
-  if (!memory) return <p className="text-white p-6">Memory tidak ditemukan.</p>;
+  if (loading)
+    return <p className="text-gray-200 p-6 max-w-3xl mx-auto">Loading...</p>;
+
+  if (!memory)
+    return (
+      <p className="text-gray-200 p-6 max-w-3xl mx-auto">
+        Memory tidak ditemukan.
+      </p>
+    );
 
   return (
     <>
-      <div className="max-w-3xl mx-auto p-4 sm:p-6 text-white relative">
-        {/* DELETE BUTTON */}
-        <div className="absolute top-4 right-4 z-50">
+      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 text-slate-100 grid grid-cols-1 md:grid-cols-[1.7fr_1fr] gap-10 relative">
+        {/* LEFT COLUMN — IMAGE */}
+        <div className="space-y-4 md:pr-2">
           <button
-            onClick={() => setShowDeleteModal(true)}
-            className="bg-red-700 hover:bg-red-800 text-xs px-3 py-1 rounded text-white"
+            onClick={() => router.push("/memory")}
+            className="text-sky-400 hover:underline"
           >
-            Hapus
+            ← Kembali ke Smart Project Wall
           </button>
+
+          <div
+            className="rounded-2xl bg-white/5 border border-white/10 cursor-zoom-in shadow-xl p-2 flex items-center justify-center"
+            role="button"
+            onClick={() => setIsFullscreen(true)}
+          >
+            <img
+              loading="eager"
+              src={memory.image_url}
+              alt={memory.title}
+              className="w-full object-contain max-h-[320px] md:max-h-[360px] rounded-xl bg-black/20 backdrop-blur-sm"
+            />
+          </div>
         </div>
 
-        <button
-          onClick={() => router.push("/memory")}
-          className="text-blue-400 hover:underline mb-4 block"
-        >
-          ← Kembali ke Smart Project Wall
-        </button>
+        {/* RIGHT COLUMN — CONTENT */}
+        <div className="flex flex-col h-full">
+          <h1 className="text-3xl font-semibold text-white mb-3">{memory.title}</h1>
+          <p className="text-gray-300 mb-6 leading-relaxed">{memory.description}</p>
 
-        {/* IMAGE */}
-        <img
-          loading="eager"
-          src={memory.image_url}
-          alt={memory.title}
-          className="w-full rounded-lg mb-4 cursor-zoom-in object-cover"
-          onClick={() => setIsFullscreen(true)}
-        />
-
-        <h1 className="text-2xl font-bold mb-2">{memory.title}</h1>
-        <p className="text-gray-300 mb-2">{memory.description}</p>
-
-        <div className="flex justify-end mt-3 text-xs text-gray-400">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span>
-              📅{" "}
-              {new Date(memory.created_at).toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-
-            <span className="text-gray-600">•</span>
-
-            <span className="flex items-center gap-1">
-              👤{" "}
-              <span className="text-gray-300 font-medium">
-                {memory.uploader}
+          <div className="w-full flex justify-end gap-6 text-sm text-gray-300 items-center mb-6">
+            <div className="flex items-center gap-2">
+              <span>📅</span>
+              <span>
+                {new Date(memory.created_at).toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
-            </span>
+            </div>
 
-            <span className="text-gray-600">•</span>
+            <div className="flex items-center gap-2">
+              <span>👤</span>
+              <span className="font-medium">{memory.uploader || "Anonim"}</span>
+            </div>
 
-            <span
+            <button
+              onClick={() => commentRef.current?.openModal()}
+              className="hover:underline"
+            >
+              Komentar
+            </button>
+
+            <button
               onClick={() => {
                 setEditTitle(memory.title || "");
                 setEditDescription(memory.description || "");
@@ -233,30 +251,33 @@ export default function MemoryDetailPage() {
                 setEditImageFile(null);
                 setShowEditModal(true);
               }}
-              className="text-blue-400 cursor-pointer hover:underline"
+              className="hover:underline text-sky-300"
             >
               Sunting
-            </span>
+            </button>
 
-            <span className="text-gray-600">•</span>
-
-            <span
-              onClick={() => commentRef.current?.openModal()}
-              className="text-blue-400 cursor-pointer hover:underline"
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="hover:underline text-red-400"
             >
-              Komentar
-            </span>
+              Hapus
+            </button>
           </div>
+
+          <hr className="border-gray-800 mb-4" />
+
+          {/* COMMENT SECTION */}
+          <CommentSection
+            memoryId={memory.id}
+            initialComments={initialComments} // sudah termasuk reply
+            deviceIdentity={deviceIdentity}
+            ref={commentRef}
+          />
+
+          <hr className="border-gray-800 mt-6" />
         </div>
-
-        <hr className="border-gray-800 mt-3 mb-0" />
-
-        <CommentSection memoryId={memory.id} ref={commentRef} />
-
-        <hr className="border-gray-700 mb-3" />
       </div>
 
-      {/* FULLSCREEN VIEWER */}
       {isFullscreen && (
         <FullscreenViewer
           imageUrl={memory.image_url}
@@ -265,7 +286,6 @@ export default function MemoryDetailPage() {
         />
       )}
 
-      {/* DELETE MODAL */}
       <DeleteModal
         isOpen={showDeleteModal}
         secretCode={secretCode}
@@ -278,7 +298,6 @@ export default function MemoryDetailPage() {
         onConfirm={handleDelete}
       />
 
-      {/* EDIT MODAL */}
       <EditModal
         isOpen={showEditModal}
         title={editTitle}
