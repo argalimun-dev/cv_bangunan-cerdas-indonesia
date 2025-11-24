@@ -1,32 +1,55 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
-/* ⭐ Import Geist Sans (Variable) dari Fontsource */
-import "@fontsource/geist-sans";
+/* ================================
+   ⭐ Import Geist Sans (static weights)
+   ================================ */
+import "@fontsource/geist-sans"; // regular
+import "@fontsource/geist-sans/200.css";
+import "@fontsource/geist-sans/300.css";
+import "@fontsource/geist-sans/400.css";
+import "@fontsource/geist-sans/500.css";
+import "@fontsource/geist-sans/600.css";
+import "@fontsource/geist-sans/700.css";
 
+/* ================================
+   📌 FIX: viewport (untuk themeColor)
+   ================================ */
+export const viewport: Viewport = {
+  themeColor: "#0b1623",
+};
+
+/* ================================
+   📌 Metadata normal (tanpa themeColor)
+   ================================ */
 export const metadata: Metadata = {
   title: "CV. Bangunan Cerdas Indonesia",
   description: "Smart Project Wall untuk menyimpan Project berharga Kami",
 
-  /* ⭐ SEO & Favicon */
   icons: {
-    icon: "/favicon.svg",              // favicon utama
-    shortcut: "/favicon.svg",          // untuk browser lama
-    apple: "/apple-touch-icon.png",    // kalau kamu menambahkannya
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.svg",
   },
 
-  /* ⭐ Open Graph (bagus untuk share WA/FB) */
+  manifest: "/manifest.webmanifest",
+
   openGraph: {
     title: "CV. Bangunan Cerdas Indonesia",
     description: "Smart Project Wall untuk menyimpan Project berharga Kami",
-    url: "https://cv-bangunan-cerdas-indonesia.vercel.app/", // ubah setelah deploy
+    url: "https://cv-bangunan-cerdas-indonesia.vercel.app/",
     siteName: "CV. Bangunan Cerdas Indonesia",
     locale: "id_ID",
     type: "website",
   },
 
-  /* ⭐ Robots (SEO indexing) */
   robots: {
     index: true,
     follow: true,
@@ -49,10 +72,8 @@ export default function RootLayout({
           from-[#0b1623] via-[#05080c] to-black
         `}
       >
-        {/* ⭐ Navbar fixed premium */}
         <Navbar />
 
-        {/* ⭐ Safe content spacing */}
         <main className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
           {children}
         </main>

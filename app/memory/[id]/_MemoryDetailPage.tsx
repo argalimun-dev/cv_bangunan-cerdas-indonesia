@@ -8,6 +8,14 @@ import FullscreenViewer from "@/components/FullscreenViewer";
 import DeleteModal from "@/components/DeleteModal";
 import EditModal from "@/components/EditModal";
 
+// Safe UUID fallback
+const safeUUID = () => {
+  try {
+    if (crypto?.randomUUID) return crypto.randomUUID();
+  } catch {}
+  return Math.random().toString(36).substring(2) + Date.now();
+};
+
 export default function MemoryDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -34,14 +42,24 @@ export default function MemoryDetailPage() {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Generate deviceIdentity
+  // Lock/unlock scroll when fullscreen
   useEffect(() => {
-    let id = localStorage.getItem("deviceIdentity");
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem("deviceIdentity", id);
+    if (isFullscreen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+  }, [isFullscreen]);
+
+  // Generate deviceIdentity safely
+  useEffect(() => {
+    try {
+      let id = localStorage.getItem("deviceIdentity");
+      if (!id) {
+        id = safeUUID();
+        localStorage.setItem("deviceIdentity", id);
+      }
+      setDeviceIdentity(id);
+    } catch {
+      setDeviceIdentity(safeUUID());
     }
-    setDeviceIdentity(id);
   }, []);
 
   // Fetch memory + comments + reply_comments
@@ -62,10 +80,16 @@ export default function MemoryDetailPage() {
         .eq("memory_id", memoryId)
         .order("created_at", { ascending: true });
 
-      const { data: replies } = await supabase
+      let replies: any[] = [];
+      if (comments?.length) {
+      const { data: replyData } = await supabase
         .from("reply_comments")
         .select("*")
+        .in("parent_comment_id", comments.map((c: any) => c.id))
         .order("created_at", { ascending: true });
+
+      replies = replyData || [];
+      }
 
       // Gabungkan reply ke comments flat
       const allComments = [
@@ -102,12 +126,24 @@ export default function MemoryDetailPage() {
         return;
       }
 
-      await supabase.from("comments").delete().eq("memory_id", memory.id);
-      await supabase.from("reply_comments").delete().in("parent_comment_id", (await supabase
+      // Get comment IDs first
+      const { data: commentRows } = await supabase
         .from("comments")
         .select("id")
-        .eq("memory_id", memory.id)).data?.map((c: any) => c.id) || []);
+        .eq("memory_id", memory.id);
 
+      const commentIds = commentRows?.map((c: any) => c.id) || [];
+
+      if (commentIds.length > 0) {
+        await supabase
+          .from("reply_comments")
+          .delete()
+          .in("parent_comment_id", commentIds);
+      }
+
+      await supabase.from("comments").delete().eq("memory_id", memory.id);
+      
+      // Delete image from storage
       const imagePath = memory.image_url?.split("/storage/v1/object/public/images/")[1];
       if (imagePath) await supabase.storage.from("images").remove([imagePath]);
 
@@ -131,6 +167,20 @@ export default function MemoryDetailPage() {
     setEditLoading(true);
 
     try {
+      // Validate file
+      if (editImageFile) {
+        if (!editImageFile.type.startsWith("image/")) {
+          alert("Hanya file gambar yang diperbolehkan.");
+          setEditLoading(false);
+          return;
+        }
+        if (editImageFile.size > 5 * 1024 * 1024) {
+          alert("Ukuran maksimal gambar adalah 5MB.");
+          setEditLoading(false);
+          return;
+        }
+      }
+
       let imageUrl = memory.image_url;
 
       if (editImageFile) {
@@ -190,7 +240,7 @@ export default function MemoryDetailPage() {
 
   return (
     <>
-      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 text-slate-100 grid grid-cols-1 md:grid-cols-[1.7fr_1fr] gap-10 relative">
+      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 text-slate-100 grid grid-cols-1 md:grid-cols-[1.4fr_1fr] xl:grid-cols-[1.7fr_1fr] gap-10 relative">
         {/* LEFT COLUMN — IMAGE */}
         <div className="space-y-4 md:pr-2">
           <button
@@ -206,12 +256,32 @@ export default function MemoryDetailPage() {
             onClick={() => setIsFullscreen(true)}
             aria-label="Perbesar gambar"
           >
-            <img
-              loading="eager"
-              src={memory.image_url}
-              alt={memory.title || "Gambar Project CV. Bangunan Cerdas Indonesia"}
-              className="w-full object-contain max-h-[320px] md:max-h-[360px] rounded-xl bg-black/20 backdrop-blur-sm"
-            />
+            <div
+              className="
+                w-full
+                h-[330px]          /* ← HEIGHT FIXED (Mobile) */
+                md:h-[410px]       /* ← FIXED HEIGHT TABLET */
+                lg:h-[460px]       /* ← FIXED HEIGHT DESKTOP */
+                xl:h-[510px]       /* ← FIXED HEIGHT LARGE DESKTOP */
+                2xl:h-[550px]      /* ← Opsional monitor besar */
+                overflow-hidden
+                flex items-center justify-center
+              "
+            >
+              <img
+                loading="eager"
+                src={memory.image_url}
+                alt={memory.title || 'Gambar Project CV. Bangunan Cerdas Indonesia'}
+                className="
+                  object-contain
+                  w-full
+                  h-full
+                  rounded-xl
+                  bg-black/20
+                  backdrop-blur-sm
+                "
+              />
+            </div>
           </div>
         </div>
 
@@ -220,7 +290,7 @@ export default function MemoryDetailPage() {
           <h1 className="text-3xl font-semibold text-white mb-3">{memory.title}</h1>
           <p className="text-gray-300 mb-6 leading-relaxed">{memory.description}</p>
 
-          <div className="w-full flex justify-end gap-6 text-sm text-gray-300 items-center mb-6">
+          <div className="w-full flex flex-wrap justify-end gap-4 text-sm text-gray-300 items-center mb-6">
             <div className="flex items-center gap-2">
               <span>📅</span>
               <span>
@@ -228,7 +298,7 @@ export default function MemoryDetailPage() {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
-                })}
+                }) || new Date(memory.created_at).toDateString()}
               </span>
             </div>
 

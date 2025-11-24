@@ -9,9 +9,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        geist: ['"Geist Sans"', "sans-serif"],
+        // Gunakan font dari @fontsource/geist-sans
+        geist: ["Geist Sans", "ui-sans-serif", "system-ui", "sans-serif"],
       },
-      // Tambahkan custom token lain di sini nanti
     },
   },
 

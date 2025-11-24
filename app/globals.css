@@ -7,17 +7,6 @@
 @tailwind utilities;
 
 /* =======================
-   FONT IMPORT (GEIST SANS)
-   ======================= */
-
-@font-face {
-  font-family: 'Geist Sans';
-  src: url('/fonts/GeistVF.woff2') format('woff2');
-  font-weight: 100 900;
-  font-display: swap;
-}
-
-/* =======================
    DESIGN TOKENS (THEME)
    ======================= */
 
@@ -53,6 +42,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+
+  /* Gunakan font dari @fontsource */
   font-family: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
 
   background: var(--bg);
