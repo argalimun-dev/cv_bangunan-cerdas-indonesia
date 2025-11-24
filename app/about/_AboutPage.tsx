@@ -48,7 +48,7 @@ export default function AboutPage() {
           content="CV. Bangunan Cerdas Indonesia — Platform Galeri Pemasaran Digital Interaktif untuk menampilkan, menyimpan, dan mendokumentasikan berbagai Project Smart Building."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://namadomainmu.com/about" />
+        <meta property="og:url" content="https://cv-bangunan-cerdas-indonesia.vercel.app/" />
         <meta property="og:image" content="/images/og-about.png" />
 
         {/* Twitter Card */}

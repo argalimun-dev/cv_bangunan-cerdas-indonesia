@@ -8,6 +8,29 @@ import "@fontsource/geist-sans";
 export const metadata: Metadata = {
   title: "CV. Bangunan Cerdas Indonesia",
   description: "Smart Project Wall untuk menyimpan Project berharga Kami",
+
+  /* ⭐ SEO & Favicon */
+  icons: {
+    icon: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.svg",              // favicon utama
+    shortcut: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.svg",          // untuk browser lama
+    apple: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.png",    // kalau kamu menambahkannya
+  },
+
+  /* ⭐ Open Graph (bagus untuk share WA/FB) */
+  openGraph: {
+    title: "CV. Bangunan Cerdas Indonesia",
+    description: "Smart Project Wall untuk menyimpan Project berharga Kami",
+    url: "https://cv-bangunan-cerdas-indonesia.vercel.app/", // ubah setelah deploy
+    siteName: "CV. Bangunan Cerdas Indonesia",
+    locale: "id_ID",
+    type: "website",
+  },
+
+  /* ⭐ Robots (SEO indexing) */
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

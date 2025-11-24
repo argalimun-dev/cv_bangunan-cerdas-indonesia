@@ -22,7 +22,7 @@ export default function HomePage() {
           content="Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://namadomainmu.com" />
+        <meta property="og:url" content="https://cv-bangunan-cerdas-indonesia.vercel.app/" />
         <meta property="og:image" content="/images/og-home.png" />
 
         {/* Twitter Card */}

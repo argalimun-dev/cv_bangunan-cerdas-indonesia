@@ -68,7 +68,7 @@ export default function MemoryListPage() {
           content="Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://namadomainmu.com/memory" />
+        <meta property="og:url" content="https://cv-bangunan-cerdas-indonesia.vercel.app/" />
         <meta property="og:image" content="/images/og-memory.png" />
 
         {/* Twitter Card */}
