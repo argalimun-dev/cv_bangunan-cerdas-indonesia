@@ -14,18 +14,13 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-
       if (currentScroll > lastScroll && currentScroll > 70) {
-        // Scroll ke bawah → hide navbar
         setIsVisible(false);
       } else {
-        // Scroll ke atas → show navbar
         setIsVisible(true);
       }
-
       setLastScroll(currentScroll);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScroll]);
@@ -35,7 +30,7 @@ export default function Navbar() {
       className={`
         fixed top-0 left-0 right-0 z-50
         bg-[rgba(10,15,22,0.65)]
-        backdrop-blur-lg 
+        backdrop-blur-lg
         border-b border-white/5
         shadow-[0_2px_15px_rgba(0,0,0,0.25)]
         transition-transform duration-300
@@ -98,13 +93,14 @@ export default function Navbar() {
 
       {/* Mobile Dropdown */}
       <div
-        className={`md:hidden bg-[rgba(10,15,22,0.9)] backdrop-blur-xl 
-          border-t border-white/10 transition-all duration-300 overflow-hidden 
-          ${menuOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}
+        className={`
+          md:hidden bg-[rgba(10,15,22,0.9)] backdrop-blur-xl 
+          border-t border-white/10 transition-all duration-300
+          overflow-y-auto scrollbar-custom
+          ${menuOpen ? "max-h-60 opacity-100 py-4" : "max-h-0 opacity-0 py-0"}
         `}
       >
-        <div className="px-6 py-4 flex flex-col space-y-3">
-
+        <div className="px-6 flex flex-col space-y-3">
           <Link
             href="/memory/new"
             onClick={() => setMenuOpen(false)}
@@ -122,7 +118,6 @@ export default function Navbar() {
           >
             Tentang Kami
           </Link>
-
         </div>
       </div>
     </nav>

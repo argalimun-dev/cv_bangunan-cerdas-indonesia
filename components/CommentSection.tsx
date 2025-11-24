@@ -4,7 +4,7 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import CommentList from "./CommentList";
 import CommentModal from "./CommentModal";
 import { supabase } from "@/lib/supabaseClient";
-import type { CommentShape } from "./CommentItem";
+import type { CommentShape } from "@/types/comment";
 
 export interface CommentSectionRef {
   openModal: () => void;
@@ -16,14 +16,10 @@ interface Props {
   deviceIdentity: string | null;
 }
 
-interface InternalComment extends CommentShape {
-  parent_id?: string | null;
-}
-
 const CommentSection = forwardRef<CommentSectionRef, Props>(
   ({ memoryId, initialComments, deviceIdentity }, ref) => {
-    const [comments, setComments] = useState<InternalComment[]>([]);
-    const [replies, setReplies] = useState<Record<string, InternalComment[]>>({});
+    const [comments, setComments] = useState<CommentShape[]>([]);
+    const [replies, setReplies] = useState<Record<string, CommentShape[]>>({});
 
     const [replyToId, setReplyToId] = useState<string | null>(null);
     const [replyText, setReplyText] = useState<string>("");
@@ -43,8 +39,8 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       },
     }));
 
-    const buildRepliesMap = (allComments: InternalComment[]) => {
-      const map: Record<string, InternalComment[]> = {};
+    const buildRepliesMap = (allComments: CommentShape[]) => {
+      const map: Record<string, CommentShape[]> = {};
       allComments.forEach((c) => {
         if (c.parent_id) {
           if (!map[c.parent_id]) map[c.parent_id] = [];
@@ -66,9 +62,11 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
         .select("*")
         .order("created_at", { ascending: true });
 
-      const internalComments: InternalComment[] = [];
+      const internalComments: CommentShape[] = [];
 
-      commentData?.forEach((c: any) => internalComments.push({ ...c, parent_id: null }));
+      commentData?.forEach((c: any) =>
+        internalComments.push({ ...c, parent_id: null })
+      );
       replyData?.forEach((r: any) =>
         internalComments.push({ ...r, parent_id: r.parent_comment_id, commenter: r.name })
       );
@@ -79,7 +77,7 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
 
     useEffect(() => {
       if (initialComments?.length) {
-        const internal: InternalComment[] = initialComments.map((c) => ({
+        const internal: CommentShape[] = initialComments.map((c) => ({
           ...c,
           parent_id: (c as any).parent_id ?? null,
         }));
@@ -133,7 +131,7 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       refresh();
     };
 
-    const onStartEdit = (c: InternalComment) => {
+    const onStartEdit = (c: CommentShape) => {
       if (editId === c.id) {
         setEditId(null);
         setEditText("");
@@ -187,28 +185,30 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
     };
 
     return (
-      <div className="space-y-4 mt-6">
-        <h3 className="text-lg font-semibold text-white">Komentar</h3>
+      <div className="space-y-3 mt-4">
+        <h3 className="text-md font-semibold text-white">Komentar</h3>
 
-        <CommentList
-          comments={comments}
-          replies={replies}
-          deviceIdentity={deviceIdentity}
-          onStartReply={onStartReply}
-          onSendReply={onSendReply}
-          onStartEdit={onStartEdit}
-          onUpdate={onUpdate}
-          onDelete={onDelete}
-          editId={editId}
-          editText={editText}
-          setEditText={setEditText}
-          replyToId={replyToId}
-          replyText={replyText}
-          setReplyText={setReplyText}
-          replyName={replyName}
-          setReplyName={setReplyName}
-          sending={sending}
-        />
+        <div className="space-y-2">
+          <CommentList
+            comments={comments}
+            replies={replies}
+            deviceIdentity={deviceIdentity}
+            onStartReply={onStartReply}
+            onSendReply={onSendReply}
+            onStartEdit={onStartEdit}
+            onUpdate={onUpdate}
+            onDelete={onDelete}
+            editId={editId}
+            editText={editText}
+            setEditText={setEditText}
+            replyToId={replyToId}
+            replyText={replyText}
+            setReplyText={setReplyText}
+            replyName={replyName}
+            setReplyName={setReplyName}
+            sending={sending}
+          />
+        </div>
 
         <CommentModal
           open={modalOpen}

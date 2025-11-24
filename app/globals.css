@@ -12,7 +12,7 @@
 
 :root {
   /* Color System */
-  --bg: #0f172a; /* Navy deep background */
+  --bg: #0f172a;
   --surface: rgba(255, 255, 255, 0.03);
   --surface-strong: rgba(255, 255, 255, 0.06);
   --border: rgba(255, 255, 255, 0.08);
@@ -31,7 +31,7 @@
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.35);
 
   /* Radius */
-  --radius: 1rem; /* 16px — premium rounded */
+  --radius: 1rem;
 }
 
 /* =======================
@@ -43,9 +43,7 @@ body {
   margin: 0;
   padding: 0;
 
-  /* Gunakan font dari @fontsource */
   font-family: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
-
   background: var(--bg);
   color: var(--text-primary);
 
@@ -55,6 +53,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   overflow-x: hidden;
+  scroll-behavior: smooth; /* scroll smooth global */
 }
 
 /* Anchor */
@@ -74,7 +73,7 @@ a {
    UTILITY CLASSES
    ======================= */
 
-/* Card Base (optional utility) */
+/* Card Base */
 .card-base {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -98,35 +97,53 @@ a {
 }
 
 /* =======================
-   ANIMATIONS (Premium)
+   ANIMATIONS
    ======================= */
 
 /* Fade In */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
+.animate-fadeIn { animation: fadeIn 0.25s cubic-bezier(0.16,1,0.3,1); }
 
-.animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Zoom In (Modal) */
+/* Zoom In */
 @keyframes zoomIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0.6;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.95); opacity: 0.6; }
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-zoomIn { animation: zoomIn 0.28s cubic-bezier(0.16,1,0.3,1); }
+
+/* =======================
+   SCROLLBAR CUSTOM (DARK THEME)
+   ======================= */
+
+/* Scrollbar global utility */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; /* horizontal scrollbar */
 }
 
-.animate-zoomIn {
-  animation: zoomIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  border: 2px solid rgba(15,23,42,0.0);
+}
+
+.scrollbar-custom {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255,255,255,0.2) var(--surface); /* Firefox */
+  scroll-behavior: smooth;
+}
+
+/* Mobile & touch devices: force smooth scroll for overflow divs */
+@media (pointer: coarse) {
+  .scrollbar-custom {
+    -webkit-overflow-scrolling: touch;
+  }
 }

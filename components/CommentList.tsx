@@ -1,16 +1,17 @@
 "use client";
 
 import React from "react";
-import CommentItem, { InternalComment } from "./CommentItem";
+import CommentItem from "./CommentItem";
+import { CommentShape } from "@/types/comment";
 
 interface Props {
-  comments: InternalComment[];
-  replies: Record<string, InternalComment[]>; // mapping comment.id ke array balasan
+  comments: CommentShape[];
+  replies: Record<string, CommentShape[]>; // mapping comment.id ke array balasan
   deviceIdentity?: string | null;
 
   onStartReply: (id: string) => void;
   onSendReply: (parentId: string, text: string, name?: string) => void;
-  onStartEdit: (c: InternalComment) => void;
+  onStartEdit: (c: CommentShape) => void;
   onUpdate: (id: string, newText: string) => void;
   onDelete: (id: string, isParent?: boolean) => void;
 
@@ -47,7 +48,7 @@ export default function CommentList({
   sending,
 }: Props) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {comments.length === 0 && (
         <p className="text-gray-400 text-sm">Belum ada komentar.</p>
       )}

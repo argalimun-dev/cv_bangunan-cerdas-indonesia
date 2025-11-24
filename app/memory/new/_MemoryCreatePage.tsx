@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, useCallback } from "react";
+import { useState, FormEvent, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -12,6 +12,16 @@ export default function MemoryCreatePage() {
   const [uploader, setUploader] = useState("");
   const [secretCode, setSecretCode] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const descRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Auto-grow textarea
+  useEffect(() => {
+    if (!descRef.current) return;
+    const ta = descRef.current;
+    ta.style.height = "auto";
+    ta.style.height = ta.scrollHeight + "px";
+  }, [description]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
@@ -99,7 +109,7 @@ export default function MemoryCreatePage() {
   );
 
   return (
-    <div className="w-full px-4 py-10">
+    <div className="w-full px-4 py-10 min-h-screen overflow-y-auto scrollbar-custom scroll-smooth">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-200 mb-6">
           Tambah Project Baru
@@ -107,7 +117,7 @@ export default function MemoryCreatePage() {
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl"
+          className="space-y-6 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl overflow-hidden"
         >
           {/* Judul */}
           <div className="flex flex-col gap-1">
@@ -125,11 +135,12 @@ export default function MemoryCreatePage() {
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-400">Deskripsi</label>
             <textarea
+              ref={descRef}
               placeholder="Tuliskan cerita singkat..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none"
+              className="bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none overflow-y-auto scrollbar-custom scroll-smooth"
             />
           </div>
 

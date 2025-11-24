@@ -84,7 +84,7 @@ export default function MemoryListPage() {
       {/* ======================
             PAGE CONTENT
          ====================== */}
-      <main className="min-h-screen text-gray-100 flex flex-col items-center">
+      <main className="min-h-screen text-gray-100 flex flex-col items-center w-full scrollbar-custom">
         {/* === Header bersih === */}
         <header className="w-full text-center pt-6 pb-6 bg-gray-900/10 backdrop-blur-md">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
