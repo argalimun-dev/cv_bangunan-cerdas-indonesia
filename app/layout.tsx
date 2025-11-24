@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
   /* ⭐ SEO & Favicon */
   icons: {
-    icon: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.svg",              // favicon utama
-    shortcut: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.svg",          // untuk browser lama
-    apple: "/bangunan-cerdas-indonesia-high-resolution-logo-transparent.png",    // kalau kamu menambahkannya
+    icon: "/favicon.svg",              // favicon utama
+    shortcut: "/favicon.svg",          // untuk browser lama
+    apple: "/apple-touch-icon.png",    // kalau kamu menambahkannya
   },
 
   /* ⭐ Open Graph (bagus untuk share WA/FB) */
