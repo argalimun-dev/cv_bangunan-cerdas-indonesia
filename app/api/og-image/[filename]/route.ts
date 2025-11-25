@@ -8,7 +8,6 @@ export async function GET(
   { params }: { params: { filename: string } }
 ) {
   const { filename } = params;
-
   if (!filename) {
     return new Response(JSON.stringify({ error: "Filename required" }), {
       status: 400,
@@ -18,11 +17,12 @@ export async function GET(
 
   const originalUrl = `https://gbflgmylrpjqmpszlvut.supabase.co/storage/v1/object/public/images/${filename}`;
 
-  // max width OG ringan
-  const maxWidth = 600; // maksimal width OG, tapi akan auto scale
+  // OG super ringan
+  const maxWidth = 600; // width kecil supaya WhatsApp friendly
   const ogRatio = 1.91; // rasio OG standard
 
   try {
+    // fetch original image
     const res = await fetch(originalUrl);
     if (!res.ok) throw new Error("Failed to fetch image");
 
@@ -34,7 +34,6 @@ export async function GET(
     let width = imgBitmap.width;
     let height = imgBitmap.height;
 
-    // jika lebih lebar dari maxWidth → scale down
     if (width > maxWidth) {
       width = maxWidth;
       height = Math.round(width / ogRatio);
@@ -42,38 +41,35 @@ export async function GET(
       height = Math.round(width / ogRatio);
     }
 
-    // Canvas downscale
+    // canvas downscale
     const offscreen = new OffscreenCanvas(width, height);
     const ctx = offscreen.getContext("2d")!;
     ctx.drawImage(imgBitmap, 0, 0, width, height);
 
-    // convert ke WebP ringan
+    // convert ke Blob WebP ringan
     const downscaledBlob = await offscreen.convertToBlob({
       type: "image/webp",
       quality: 0.8,
     });
 
-    const downscaledBitmap = await createImageBitmap(downscaledBlob);
+    // convert Blob → base64 string supaya bisa dipakai ImageResponse
+    const arrayBuffer2 = await downscaledBlob.arrayBuffer();
+    const base64 = Buffer.from(arrayBuffer2).toString("base64");
+    const dataUrl = `data:image/webp;base64,${base64}`;
 
-    // ImageResponse OG
     return new ImageResponse(
       {
         type: "img",
         props: {
-          src: downscaledBitmap,
+          src: dataUrl,
           width,
           height,
-          style: {
-            width: `${width}px`,
-            height: `${height}px`,
-            objectFit: "cover",
-          },
+          style: { width: `${width}px`, height: `${height}px`, objectFit: "cover" },
         },
       } as any,
       { width, height }
     );
   } catch (err) {
-    // fallback
     return new ImageResponse(
       {
         type: "div",
