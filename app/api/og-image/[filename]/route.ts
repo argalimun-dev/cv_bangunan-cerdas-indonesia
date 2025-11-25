@@ -10,68 +10,88 @@ export async function GET(
   const { filename } = params;
 
   if (!filename) {
-    return new Response(
-      JSON.stringify({ error: "Filename required" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Filename required" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const originalUrl = `https://gbflgmylrpjqmpszlvut.supabase.co/storage/v1/object/public/images/${filename}`;
 
-  const width = 1200;
-  const height = 630;
+  // max width OG ringan
+  const maxWidth = 600; // maksimal width OG, tapi akan auto scale
+  const ogRatio = 1.91; // rasio OG standard
 
   try {
-    // fetch image dari Supabase
     const res = await fetch(originalUrl);
     if (!res.ok) throw new Error("Failed to fetch image");
 
-    // langsung pakai URL eksternal di ImageResponse
+    const arrayBuffer = await res.arrayBuffer();
+    const blob = new Blob([arrayBuffer]);
+    const imgBitmap = await createImageBitmap(blob);
+
+    // tentukan ukuran downscale otomatis
+    let width = imgBitmap.width;
+    let height = imgBitmap.height;
+
+    // jika lebih lebar dari maxWidth → scale down
+    if (width > maxWidth) {
+      width = maxWidth;
+      height = Math.round(width / ogRatio);
+    } else {
+      height = Math.round(width / ogRatio);
+    }
+
+    // Canvas downscale
+    const offscreen = new OffscreenCanvas(width, height);
+    const ctx = offscreen.getContext("2d")!;
+    ctx.drawImage(imgBitmap, 0, 0, width, height);
+
+    // convert ke WebP ringan
+    const downscaledBlob = await offscreen.convertToBlob({
+      type: "image/webp",
+      quality: 0.8,
+    });
+
+    const downscaledBitmap = await createImageBitmap(downscaledBlob);
+
+    // ImageResponse OG
     return new ImageResponse(
       {
-        // type hanya untuk ImageResponse internal, bukan ReactElement
-        type: "div",
+        type: "img",
         props: {
+          src: downscaledBitmap,
+          width,
+          height,
           style: {
             width: `${width}px`,
             height: `${height}px`,
-            backgroundColor: "#000",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            objectFit: "cover",
           },
-          children: [
-            {
-              type: "img",
-              props: {
-                src: originalUrl,
-                style: { width: "100%", height: "100%", objectFit: "cover" },
-              },
-            },
-          ],
         },
-      } as any, // <--- pakai "as any" supaya TS tidak nge-cek ReactElement
+      } as any,
       { width, height }
     );
   } catch (err) {
+    // fallback
     return new ImageResponse(
       {
         type: "div",
         props: {
           style: {
-            width: `${width}px`,
-            height: `${height}px`,
+            width: `${maxWidth}px`,
+            height: `${Math.round(maxWidth / ogRatio)}px`,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#000",
             color: "#fff",
-            fontSize: 40,
+            fontSize: 24,
           },
           children: "Image Not Found",
         },
       } as any,
-      { width, height }
+      { width: maxWidth, height: Math.round(maxWidth / ogRatio) }
     );
   }
 }
