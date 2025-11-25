@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head"; // import Head untuk SEO
-import logo from "@/lib/assets/logo.png"; // pastikan path benar
 
 export default function AboutPage() {
   const teamMembers = [
@@ -69,7 +68,7 @@ export default function AboutPage() {
           {/* HERO LOGO FULL WIDTH */}
           <div className="flex justify-center mb-8 px-0">
             <Image
-              src={logo}
+              src="/logo.png"
               alt="Logo CV. Bangunan Cerdas Indonesia"
               className="w-[800px] max-w-full h-auto object-contain"
               width={800}

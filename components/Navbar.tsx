@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logo from "@/lib/assets/logo.png";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -43,11 +42,11 @@ export default function Navbar() {
         <div className="flex items-center gap-3 sm:gap-4">
           <Link href="/" className="flex-shrink-0">
             <Image
-              src={logo}
+              src="/logo.png"
               alt="Logo CV. Bangunan Cerdas Indonesia"
               width={120}
               height={40}
-              className="w-[60px] sm:w-[80px] md:w-[120px] h-auto transition-all"
+              className="h-auto w-auto max-w-[60px] sm:w-[80px] md:w-[120px] transition-all"
             />
           </Link>
 

@@ -65,6 +65,7 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning>
       <body
         className={`
+          scrollbar-custom
           font-geist 
           text-gray-200 min-h-screen antialiased 
           selection:bg-sky-400/40

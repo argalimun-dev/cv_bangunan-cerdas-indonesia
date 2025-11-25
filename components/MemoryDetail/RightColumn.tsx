@@ -61,7 +61,7 @@ export default function RightColumn({
         {/* Metadata & tombol */}
         <div className="w-full flex flex-wrap justify-end gap-3 text-sm text-gray-300 items-center mb-3">
           <div className="flex items-center gap-2">
-            <span>📅</span>
+            <span>🗓️</span>
             <span>
               {new Date(memory.created_at).toLocaleDateString("id-ID", {
                 day: "2-digit",
