@@ -7,13 +7,9 @@ interface PageProps {
   params: { id: string };
 }
 
-// ========================================
-// 1️⃣ generateMetadata untuk SEO + OG/Twitter
-// ========================================
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const memoryId = params.id;
 
-  // Fetch memory dari Supabase
   const { data: mem } = await supabase
     .from("memories")
     .select("*")
@@ -27,6 +23,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  // -----------------------------
+  //  Extract filename untuk proxy
+  // -----------------------------
+  let ogImageProxyUrl: string | undefined = undefined;
+
+  if (mem.image_url) {
+    try {
+      const urlObj = new URL(mem.image_url);
+      const parts = urlObj.pathname.split("/");
+      const filename = parts[parts.length - 1];
+
+      // URL baru lewat OG proxy
+      ogImageProxyUrl = `https://cv-bangunan-cerdas-indonesia.vercel.app/api/og-image/${filename}`;
+    } catch (e) {
+      // fallback kalau parsing gagal
+      ogImageProxyUrl = mem.image_url;
+    }
+  }
+
   return {
     title: `${mem.title} | Smart Project Wall`,
     description: mem.description || "Detail project CV. Bangunan Cerdas Indonesia",
@@ -34,25 +49,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: mem.title,
       description: mem.description || "CV. Bangunan Cerdas Indonesia",
       url: `https://cv-bangunan-cerdas-indonesia.vercel.app/memory/${mem.id}`,
-      images: mem.image_url ? [{ url: mem.image_url, width: 800, height: 600 }] : [],
       siteName: "Smart Project Wall",
       locale: "id_ID",
       type: "website",
+      images: ogImageProxyUrl
+        ? [
+            {
+              url: ogImageProxyUrl,
+              width: 1200,
+              height: 630,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: mem.title,
       description: mem.description || "CV. Bangunan Cerdas Indonesia",
-      images: mem.image_url ? [mem.image_url] : [],
+      images: ogImageProxyUrl ? [ogImageProxyUrl] : [],
       site: "@CVBangunanCerdas",
       creator: "@CVBangunanCerdas",
     },
   };
 }
 
-// ========================================
-// 2️⃣ Render client component
-// ========================================
 export default function Page({ params }: PageProps) {
   return <MemoryDetailPage />;
 }
