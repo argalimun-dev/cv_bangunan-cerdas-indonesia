@@ -13,7 +13,6 @@ export async function GET(
     );
   }
 
-  // URL original di Supabase
   const imageUrl = `https://gbflgmylrpjqmpszlvut.supabase.co/storage/v1/object/public/images/${filename}`;
 
   try {
@@ -26,17 +25,13 @@ export async function GET(
       );
     }
 
-    // Ambil binary data
     const arrayBuffer = await res.arrayBuffer();
+    const contentType = res.headers.get("content-type") || "image/jpeg";
 
-    // Deteksi MIME type
-    const contentType =
-      res.headers.get("content-type") || "image/jpeg";
-
-    // Return langsung sebagai binary tanpa redirect
     return new NextResponse(arrayBuffer, {
       headers: {
         "Content-Type": contentType,
+        "Content-Disposition": "inline", // 🟢 WAJIB UNTUK OG SCRAPER
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
