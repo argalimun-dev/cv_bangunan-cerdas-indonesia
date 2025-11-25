@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: mem.title,
       description: mem.description || "CV. Bangunan Cerdas Indonesia",
-      url: `https://yourdomain.com/memory/${mem.id}`,
+      url: `https://cv-bangunan-cerdas-indonesia.vercel.app/memory/${mem.id}`,
       images: mem.image_url ? [{ url: mem.image_url, width: 800, height: 600 }] : [],
       siteName: "Smart Project Wall",
       locale: "id_ID",
