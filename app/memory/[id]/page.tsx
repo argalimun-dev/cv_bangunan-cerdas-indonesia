@@ -3,11 +3,12 @@ import { Metadata } from "next";
 import { supabase } from "@/lib/supabaseClient";
 import MemoryDetailPage from "./_MemoryDetailPage";
 
-interface PageProps {
-  params?: Promise<{ id?: string }>; // ⚠ params sekarang Promise
+// ⚠ params sekarang bisa Promise
+interface PageParams {
+  params?: Promise<{ id?: string }>;
 }
 
-export async function generateMetadata(pageProps: PageProps): Promise<Metadata> {
+export async function generateMetadata(pageProps: PageParams): Promise<Metadata> {
   try {
     const params = pageProps.params ? await pageProps.params : undefined;
     const memoryId = params?.id;
@@ -32,10 +33,8 @@ export async function generateMetadata(pageProps: PageProps): Promise<Metadata> 
       };
     }
 
-    // Pakai OG yang sudah di-resize
-    const ogImageProxyUrl = mem.filename
-      ? `/api/og-image/${mem.filename}`
-      : `/api/og-image/default.webp`;
+    // Gunakan OG image yang sudah di-generate, fallback ke default
+    const ogImageUrl = mem.og_file_name || "/api/og-image/default.webp";
 
     return {
       title: `${mem.title} | Smart Project Wall`,
@@ -47,19 +46,13 @@ export async function generateMetadata(pageProps: PageProps): Promise<Metadata> 
         siteName: "Smart Project Wall",
         locale: "id_ID",
         type: "website",
-        images: [
-          {
-            url: ogImageProxyUrl,
-            width: 600,   // versi ringan OG
-            height: 315,
-          },
-        ],
+        images: [{ url: ogImageUrl, width: 600, height: 315 }],
       },
       twitter: {
         card: "summary_large_image",
         title: mem.title,
         description: mem.description || "CV. Bangunan Cerdas Indonesia",
-        images: [ogImageProxyUrl],
+        images: [ogImageUrl],
         site: "@CVBangunanCerdas",
         creator: "@CVBangunanCerdas",
       },
@@ -73,6 +66,6 @@ export async function generateMetadata(pageProps: PageProps): Promise<Metadata> 
   }
 }
 
-export default function Page({ params }: PageProps) {
+export default function Page() {
   return <MemoryDetailPage />;
 }

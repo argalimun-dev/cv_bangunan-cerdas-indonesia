@@ -2,8 +2,8 @@
 
 export interface UpdateMemoryParams {
   id: string;
-  title?: string;          // ✅ TIDAK WAJIB LAGI
-  description?: string;
+  title?: string;          // ✅ TIDAK WAJIB
+  description?: string;    // ✅ TIDAK WAJIB
   uploader: string;
   file?: File | null;
 }
@@ -17,9 +17,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
   const chunkSize = 0x8000;
 
   for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(
-      ...bytes.subarray(i, i + chunkSize)
-    );
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
   }
 
   return btoa(binary);
@@ -30,7 +28,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
 // ================================
 export async function deleteMemory(memoryId: string, secretCode: string) {
   if (!memoryId) throw new Error("Memory ID invalid");
-  if (!secretCode.trim()) throw new Error("Masukkan kode rahasia!");
+  if (!secretCode?.trim()) throw new Error("Masukkan kode rahasia!");
 
   const res = await fetch("/api/memory/delete", {
     method: "POST",
@@ -47,7 +45,7 @@ export async function deleteMemory(memoryId: string, secretCode: string) {
 }
 
 // ================================
-// UPDATE MEMORY (client-safe) ✅ FINAL
+// UPDATE MEMORY (client-safe, final realtime)
 // ================================
 export async function updateMemory({
   id,
@@ -70,21 +68,18 @@ export async function updateMemory({
     fileType = file.type;
   }
 
-  // ✅ PAYLOAD AMAN (TIDAK MEMAKSA KIRIM title & description)
+  // ✅ PAYLOAD AMAN: hanya kirim field yang ada
   const payload: any = {
     id,
     uploader,
-    fileBase64,
-    fileName,
-    fileType,
   };
 
-  if (title !== undefined) {
-    payload.title = title;
-  }
-
-  if (description !== undefined) {
-    payload.description = description;
+  if (title !== undefined) payload.title = title;
+  if (description !== undefined) payload.description = description;
+  if (fileBase64 && fileName && fileType) {
+    payload.fileBase64 = fileBase64;
+    payload.fileName = fileName;
+    payload.fileType = fileType;
   }
 
   const res = await fetch("/api/memory/update", {
@@ -98,5 +93,6 @@ export async function updateMemory({
     throw new Error(err?.error || "Gagal memperbarui memory!");
   }
 
+  // ✅ RETURN DATA TERBARU untuk langsung update state di frontend
   return await res.json(); // { ok: true, data: updatedMemory }
 }

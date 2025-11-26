@@ -15,7 +15,6 @@ import useDeviceIdentity from "@/hooks/useDeviceIdentity";
 import useScrollLock from "@/hooks/useScrollLock";
 
 import { deleteMemory, updateMemory } from "@/services/memoryService";
-import type { MemoryShape } from "@/types/memory";
 
 export default function MemoryDetailPage() {
   const router = useRouter();
@@ -87,8 +86,8 @@ export default function MemoryDetailPage() {
       });
 
       alert("Berhasil disimpan!");
-
-      // ✅ Pakai updateMemoryState dari hook supaya React re-render otomatis
+      
+      // ✅ Update state di hook supaya re-render otomatis
       updateMemoryState(updated.data);
 
       setShowEditModal(false);
