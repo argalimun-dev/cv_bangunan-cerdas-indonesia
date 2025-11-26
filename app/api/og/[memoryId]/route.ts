@@ -49,9 +49,20 @@ export async function GET(
   // 3️⃣ Fallback ke static OG di /public/og
   // ===============================
   if (!finalBuffer) {
-    const staticPath = path.join(process.cwd(), "public", "og", `${memoryId}.webp`);
-    if (fs.existsSync(staticPath)) {
-      finalBuffer = fs.readFileSync(staticPath);
+    try {
+      const { data: ogData } = supabase.storage
+        .from("images")
+        .getPublicUrl(`og/${memoryId}.webp`);
+
+      if (ogData?.publicUrl) {
+        const res = await fetch(ogData.publicUrl);
+        if (res.ok) {
+          const arrayBuffer = await res.arrayBuffer();
+          finalBuffer = Buffer.from(arrayBuffer);
+        }
+      }
+    } catch (err) {
+      console.warn("Fallback OG from Supabase failed:", err);
     }
   }
 

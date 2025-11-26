@@ -34,7 +34,7 @@ export async function generateMetadata(pageProps: PageParams): Promise<Metadata>
     }
 
     // Gunakan OG image yang sudah di-generate, fallback ke default
-    const ogImageUrl = mem.og_file_name || "/api/og-image/default.webp";
+    const ogImageUrl = mem.og_file_name || "/og/default.webp";
 
     return {
       title: `${mem.title} | Smart Project Wall`,

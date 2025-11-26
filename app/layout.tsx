@@ -21,10 +21,10 @@ export const viewport: Viewport = {
 };
 
 /* ================================
-   📌 Metadata dengan metadataBase
+   📌 Metadata default untuk halaman statis
    ================================ */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cv-bangunan-cerdas-indonesia.vercel.app/"), // base URL produksi
+  metadataBase: new URL("https://cv-bangunan-cerdas-indonesia.vercel.app/"),
   title: "CV. Bangunan Cerdas Indonesia",
   description: "Smart Project Wall untuk menyimpan Project berharga Kami",
 
@@ -45,11 +45,26 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CV. Bangunan Cerdas Indonesia",
     description: "Smart Project Wall untuk menyimpan Project berharga Kami",
-    url: "/", // relatif ke metadataBase
+    url: "/", // default homepage
     siteName: "CV. Bangunan Cerdas Indonesia",
     locale: "id_ID",
     type: "website",
-    images: ["/og/default.webp"], // default OG image
+    images: [
+      {
+        url: "/og/default.webp",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "CV. Bangunan Cerdas Indonesia",
+    description: "Smart Project Wall untuk menyimpan Project berharga Kami",
+    images: ["/og/default.webp"],
+    site: "@CVBangunanCerdas",
+    creator: "@CVBangunanCerdas",
   },
 
   robots: {
@@ -58,22 +73,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>
       <body
-        className={`
+        className="
           scrollbar-custom
-          font-geist 
-          text-gray-200 min-h-screen antialiased 
+          font-geist
+          text-gray-200 min-h-screen antialiased
           selection:bg-sky-400/40
-          bg-gradient-to-b 
-          from-[#0b1623] via-[#05080c] to-black
-        `}
+          bg-gradient-to-b from-[#0b1623] via-[#05080c] to-black
+        "
       >
         <Navbar />
 

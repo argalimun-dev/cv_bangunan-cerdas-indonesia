@@ -6,6 +6,7 @@ export interface MemoryShape {
   description?: string;
   uploader?: string;
   image_url?: string;
+  og_file_name?: string;
   created_at?: string;
   [key: string]: any;
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import Head from "next/head"; // import Head untuk SEO
+import Head from "next/head";
 import { supabase } from "@/lib/supabaseClient";
 
 interface Memory {
@@ -10,6 +10,7 @@ interface Memory {
   title: string;
   description: string;
   image_url: string;
+  og_file_name?: string;
   created_at: string;
   uploader?: string;
 }
@@ -41,19 +42,14 @@ export default function MemoryListPage() {
     fetchMemories();
   }, [fetchMemories]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-300">
-        Memuat Project...
-      </div>
-    );
-  }
+  // ======================
+  // OG DYNAMIC
+  // ======================
+  const firstMemory = memories[0];
+  const ogImage = firstMemory?.og_file_name || "/og/default.webp";
 
   return (
     <>
-      {/* ======================
-            SEO TAGS
-         ====================== */}
       <Head>
         <title>Smart Project Wall | CV. Bangunan Cerdas Indonesia</title>
         <meta
@@ -62,30 +58,32 @@ export default function MemoryListPage() {
         />
 
         {/* Open Graph */}
-        <meta property="og:title" content="Smart Project Wall | CV. Bangunan Cerdas Indonesia" />
+        <meta
+          property="og:title"
+          content="Smart Project Wall | CV. Bangunan Cerdas Indonesia"
+        />
         <meta
           property="og:description"
           content="Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://cv-bangunan-cerdas-indonesia.vercel.app/" />
-        <meta property="og:image" content="/images/og-memory.png" />
+        <meta property="og:image" content={ogImage} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Smart Project Wall | CV. Bangunan Cerdas Indonesia" />
+        <meta
+          name="twitter:title"
+          content="Smart Project Wall | CV. Bangunan Cerdas Indonesia"
+        />
         <meta
           name="twitter:description"
           content="Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern."
         />
-        <meta name="twitter:image" content="/images/og-memory.png" />
+        <meta name="twitter:image" content={ogImage} />
       </Head>
 
-      {/* ======================
-            PAGE CONTENT
-         ====================== */}
       <main className="min-h-screen text-gray-100 flex flex-col items-center w-full scrollbar-custom">
-        {/* === Header bersih === */}
         <header className="w-full text-center pt-6 pb-6 bg-gray-900/10 backdrop-blur-md">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
             Smart Project Wall
@@ -95,7 +93,11 @@ export default function MemoryListPage() {
           </p>
         </header>
 
-        {memories.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center min-h-screen text-gray-300">
+            Memuat Project...
+          </div>
+        ) : memories.length === 0 ? (
           <p className="text-gray-500 text-center mt-20 px-4">
             Belum ada Project yang ditambahkan 😢
           </p>
@@ -123,7 +125,6 @@ export default function MemoryListPage() {
                       loading="lazy"
                       decoding="async"
                     />
-
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-4 text-center">
                       <p className="font-semibold text-lg drop-shadow-lg">
                         {memory.title}
