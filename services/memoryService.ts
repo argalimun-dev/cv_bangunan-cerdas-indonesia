@@ -1,113 +1,102 @@
-import { supabase } from "@/lib/supabaseClient";
+// services/memoryService.ts
 
 export interface UpdateMemoryParams {
   id: string;
-  title: string;
+  title?: string;          // ✅ TIDAK WAJIB LAGI
   description?: string;
-  uploader?: string;
+  uploader: string;
   file?: File | null;
 }
 
-export async function deleteMemory(memoryId: string, secretCode: string) {
-  if (!secretCode.trim()) throw new Error("Masukkan kode rahasia!");
-  if (!memoryId) throw new Error("Memory ID invalid");
+// ================================
+// UTIL: Safe ArrayBuffer → Base64
+// ================================
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
 
-  // Validasi secret code
-  const { data: validCode, error: codeErr } = await supabase
-    .from("access_codes")
-    .select("*")
-    .ilike("code", secretCode.trim())
-    .single();
-
-  if (codeErr || !validCode) {
-    throw new Error("Kode rahasia salah!");
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(i, i + chunkSize)
+    );
   }
 
-  // Ambil comment IDs
-  const { data: commentRows } = await supabase
-    .from("comments")
-    .select("id")
-    .eq("memory_id", memoryId);
-
-  const commentIds = commentRows?.map((c: any) => c.id) || [];
-
-  // Delete reply_comments
-  if (commentIds.length > 0) {
-    await supabase.from("reply_comments").delete().in("parent_comment_id", commentIds);
-  }
-
-  // Delete comments
-  await supabase.from("comments").delete().eq("memory_id", memoryId);
-
-  // Delete memory image
-  const { data: memData } = await supabase
-    .from("memories")
-    .select("image_url")
-    .eq("id", memoryId)
-    .single();
-
-  const imagePath = memData?.image_url?.split("/storage/v1/object/public/images/")[1];
-  if (imagePath) await supabase.storage.from("images").remove([imagePath]);
-
-  // Delete memory row
-  await supabase.from("memories").delete().eq("id", memoryId);
+  return btoa(binary);
 }
 
-export async function updateMemory({ id, title, description, uploader, file }: UpdateMemoryParams) {
-  if (!id) throw new Error("Memory ID invalid");
+// ================================
+// DELETE MEMORY (client-safe)
+// ================================
+export async function deleteMemory(memoryId: string, secretCode: string) {
+  if (!memoryId) throw new Error("Memory ID invalid");
+  if (!secretCode.trim()) throw new Error("Masukkan kode rahasia!");
 
-  // Ambil data lama
-  const { data: oldMemory, error: oldErr } = await supabase
-    .from("memories")
-    .select("image_url")
-    .eq("id", id)
-    .single();
-  if (oldErr) throw oldErr;
+  const res = await fetch("/api/memory/delete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memoryId, secretCode }),
+  });
 
-  let imageUrl = oldMemory?.image_url; // default: tetap pakai image lama
-
-  if (file) {
-    if (!file.type.startsWith("image/")) throw new Error("Hanya file gambar yang diperbolehkan.");
-    if (file.size > 5 * 1024 * 1024) throw new Error("Ukuran maksimal gambar adalah 5MB.");
-
-    const oldPathRes = await supabase
-      .from("memories")
-      .select("image_url")
-      .eq("id", id)
-      .single();
-    const oldPath = oldPathRes.data?.image_url?.split("/storage/v1/object/public/images/")[1];
-
-    const ext = file.name.split(".").pop();
-    const fileName = `${id}-${Date.now()}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("images")
-      .upload(fileName, file, { upsert: true });
-    if (uploadError) throw uploadError;
-
-    imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
-
-    if (oldPath) await supabase.storage.from("images").remove([oldPath]).catch(() => {});
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err?.error || "Gagal menghapus memory!");
   }
 
-  // Update memory
-  const { error } = await supabase
-    .from("memories")
-    .update({
-      title,
-      description,
-      uploader,
-      ...(imageUrl ? { image_url: imageUrl } : {}),
-    })
-    .eq("id", id);
+  return true;
+}
 
-  if (error) throw error;
+// ================================
+// UPDATE MEMORY (client-safe) ✅ FINAL
+// ================================
+export async function updateMemory({
+  id,
+  title,
+  description,
+  uploader,
+  file,
+}: UpdateMemoryParams) {
+  if (!id) throw new Error("Memory ID invalid");
+  if (!uploader?.trim()) throw new Error("Uploader wajib diisi");
 
-  return {
+  let fileBase64: string | undefined;
+  let fileName: string | undefined;
+  let fileType: string | undefined;
+
+  if (file) {
+    const arrayBuffer = await file.arrayBuffer();
+    fileBase64 = arrayBufferToBase64(arrayBuffer);
+    fileName = file.name;
+    fileType = file.type;
+  }
+
+  // ✅ PAYLOAD AMAN (TIDAK MEMAKSA KIRIM title & description)
+  const payload: any = {
     id,
-    title,
-    description,
     uploader,
-    image_url: imageUrl,
+    fileBase64,
+    fileName,
+    fileType,
   };
+
+  if (title !== undefined) {
+    payload.title = title;
+  }
+
+  if (description !== undefined) {
+    payload.description = description;
+  }
+
+  const res = await fetch("/api/memory/update", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err?.error || "Gagal memperbarui memory!");
+  }
+
+  return await res.json(); // { ok: true, data: updatedMemory }
 }

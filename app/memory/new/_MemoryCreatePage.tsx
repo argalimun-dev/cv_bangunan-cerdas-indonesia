@@ -1,7 +1,7 @@
 "use client";
+
 import { useState, FormEvent, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 
 export default function MemoryCreatePage() {
   const router = useRouter();
@@ -23,23 +23,26 @@ export default function MemoryCreatePage() {
     ta.style.height = ta.scrollHeight + "px";
   }, [description]);
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0] || null;
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selected = e.target.files?.[0] || null;
 
-    if (selected) {
-      if (selected.size > 10 * 1024 * 1024) {
-        alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
-        return;
+      if (selected) {
+        if (selected.size > 10 * 1024 * 1024) {
+          alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
+          return;
+        }
+
+        if (!selected.type.startsWith("image/")) {
+          alert("❌ File harus berupa gambar!");
+          return;
+        }
       }
 
-      if (!selected.type.startsWith("image/")) {
-        alert("❌ File harus berupa gambar!");
-        return;
-      }
-    }
-
-    setFile(selected);
-  }, []);
+      setFile(selected);
+    },
+    []
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -52,58 +55,51 @@ export default function MemoryCreatePage() {
 
       setLoading(true);
 
-      // VALIDASI KODE
-      const { data: validCode, error: codeError } = await supabase
-        .from("access_codes")
-        .select("*")
-        .ilike("code", secretCode.trim())
-        .single();
+      try {
+        // ✅ Convert file → base64 (aman)
+        const arrayBuffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = "";
+        const chunkSize = 0x8000;
 
-      if (codeError || !validCode) {
-        alert("🚫 Kode rahasia salah!");
-        setLoading(false);
-        return;
-      }
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          binary += String.fromCharCode(
+            ...bytes.subarray(i, i + chunkSize)
+          );
+        }
 
-      // SANITASI NAMA FILE
-      const sanitized = file.name.toLowerCase().replace(/[^a-z0-9.\-_]/g, "_");
-      const fileName = `${Date.now()}-${sanitized}`;
+        const fileBase64 = btoa(binary);
 
-      // UPLOAD
-      const { error: uploadError } = await supabase.storage
-        .from("images")
-        .upload(fileName, file);
+        // ✅ SELURUH PROSES LEWAT API SERVER
+        const res = await fetch("/api/memory/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            description,
+            uploader,
+            secretCode,
+            fileBase64,
+            fileName: file.name,
+            fileType: file.type,
+          }),
+        });
 
-      if (uploadError) {
-        alert("❌ Gagal upload gambar!");
-        console.error(uploadError);
-        setLoading(false);
-        return;
-      }
+        const data = await res.json();
 
-      const { data } = supabase.storage.from("images").getPublicUrl(fileName);
-      const imageUrl = data?.publicUrl || "";
+        if (!res.ok) {
+          throw new Error(data?.error || "Gagal membuat memory");
+        }
 
-      // INSERT
-      const { error: insertError } = await supabase.from("memories").insert([
-        {
-          title,
-          description,
-          image_url: imageUrl,
-          uploader,
-        },
-      ]);
-
-      if (insertError) {
-        alert("❌ Gagal menyimpan ke database!");
-        console.error(insertError);
-      } else {
         alert("✅ Berhasil menambahkan Project 🎉");
         router.replace("/memory");
         router.refresh();
+      } catch (err: any) {
+        console.error("CREATE ERROR:", err);
+        alert(err.message || "Terjadi kesalahan");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     },
     [file, title, description, uploader, secretCode, router]
   );

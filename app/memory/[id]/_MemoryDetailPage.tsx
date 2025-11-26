@@ -25,7 +25,7 @@ export default function MemoryDetailPage() {
   const commentRef = useRef<CommentSectionRef>(null);
 
   // Hooks
-  const { memory, comments, loading } = useMemoryDetail(memoryId);
+  const { memory, comments, loading, updateMemoryState } = useMemoryDetail(memoryId);
   const deviceIdentity = useDeviceIdentity();
 
   // Modal states
@@ -71,7 +71,7 @@ export default function MemoryDetailPage() {
   };
 
   // -------------------------
-  // UPDATE MEMORY
+  // UPDATE MEMORY (FINAL REALTIME)
   // -------------------------
   const handleUpdateMemory = async () => {
     if (!memory) return;
@@ -87,10 +87,9 @@ export default function MemoryDetailPage() {
       });
 
       alert("Berhasil disimpan!");
-      memory.title = updated.title;
-      memory.description = updated.description;
-      memory.uploader = updated.uploader;
-      memory.image_url = updated.image_url;
+
+      // ✅ Pakai updateMemoryState dari hook supaya React re-render otomatis
+      updateMemoryState(updated.data);
 
       setShowEditModal(false);
     } catch (err: any) {
@@ -121,7 +120,7 @@ export default function MemoryDetailPage() {
           grid grid-cols-1 md:grid-cols-[1.4fr_1fr] xl:grid-cols-[1.7fr_1fr]
           gap-6 md:gap-10
           relative
-          h-auto md:h-[calc(100vh-2rem)]   /* Mobile auto, desktop full viewport */
+          h-auto md:h-[calc(100vh-2rem)]
         "
       >
         {/* LEFT COLUMN */}

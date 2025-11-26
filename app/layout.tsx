@@ -21,9 +21,10 @@ export const viewport: Viewport = {
 };
 
 /* ================================
-   📌 Metadata normal (tanpa themeColor)
+   📌 Metadata dengan metadataBase
    ================================ */
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cv-bangunan-cerdas-indonesia.vercel.app/"), // base URL produksi
   title: "CV. Bangunan Cerdas Indonesia",
   description: "Smart Project Wall untuk menyimpan Project berharga Kami",
 
@@ -44,10 +45,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CV. Bangunan Cerdas Indonesia",
     description: "Smart Project Wall untuk menyimpan Project berharga Kami",
-    url: "https://cv-bangunan-cerdas-indonesia.vercel.app/",
+    url: "/", // relatif ke metadataBase
     siteName: "CV. Bangunan Cerdas Indonesia",
     locale: "id_ID",
     type: "website",
+    images: ["/og/default.webp"], // default OG image
   },
 
   robots: {

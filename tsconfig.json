@@ -6,35 +6,39 @@
       "DOM.Iterable",
       "ESNext"
     ],
+
     "allowJs": false,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    // 🟢 WAJIB untuk @vercel/og
-    "jsx": "react-jsx",
-    // 🟢 WAJIB untuk tipe JSX di Edge Runtime
+
+    "jsx": "preserve",
+
+    // ✅ PENTING: Tambahkan node typings
     "types": [
+      "node",
       "@vercel/og"
     ],
+
     "incremental": true,
+
     "plugins": [
-      {
-        "name": "next"
-      }
+      { "name": "next" }
     ],
+
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -42,8 +46,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next"
-  ]
+
+  "exclude": ["node_modules", ".next"]
 }

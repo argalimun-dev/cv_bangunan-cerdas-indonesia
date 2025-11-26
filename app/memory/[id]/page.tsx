@@ -9,7 +9,6 @@ interface PageProps {
 
 export async function generateMetadata(pageProps: PageProps): Promise<Metadata> {
   try {
-    // ⚠ Unwrap params sebelum akses id
     const params = pageProps.params ? await pageProps.params : undefined;
     const memoryId = params?.id;
 
@@ -33,20 +32,10 @@ export async function generateMetadata(pageProps: PageProps): Promise<Metadata> 
       };
     }
 
-    // -----------------------------
-    // Extract filename untuk OG proxy
-    // -----------------------------
-    let ogImageProxyUrl: string | undefined;
-    if (mem.image_url) {
-      try {
-        const urlObj = new URL(mem.image_url);
-        const parts = urlObj.pathname.split("/");
-        const filename = parts[parts.length - 1];
-        ogImageProxyUrl = `https://cv-bangunan-cerdas-indonesia.vercel.app/api/og-image/${filename}`;
-      } catch {
-        ogImageProxyUrl = mem.image_url; // fallback kalau parsing gagal
-      }
-    }
+    // Pakai OG yang sudah di-resize
+    const ogImageProxyUrl = mem.filename
+      ? `/api/og-image/${mem.filename}`
+      : `/api/og-image/default.webp`;
 
     return {
       title: `${mem.title} | Smart Project Wall`,
@@ -58,21 +47,19 @@ export async function generateMetadata(pageProps: PageProps): Promise<Metadata> 
         siteName: "Smart Project Wall",
         locale: "id_ID",
         type: "website",
-        images: ogImageProxyUrl
-          ? [
-              {
-                url: ogImageProxyUrl,
-                width: 1200,
-                height: 630,
-              },
-            ]
-          : [],
+        images: [
+          {
+            url: ogImageProxyUrl,
+            width: 600,   // versi ringan OG
+            height: 315,
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: mem.title,
         description: mem.description || "CV. Bangunan Cerdas Indonesia",
-        images: ogImageProxyUrl ? [ogImageProxyUrl] : [],
+        images: [ogImageProxyUrl],
         site: "@CVBangunanCerdas",
         creator: "@CVBangunanCerdas",
       },
