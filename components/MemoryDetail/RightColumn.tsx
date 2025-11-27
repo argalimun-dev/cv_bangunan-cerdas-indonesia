@@ -26,18 +26,19 @@ export default function RightColumn({
     <div
       className="
         flex flex-col
-        h-auto md:h-full        /* Mobile auto, desktop full height */
-        overflow-y-auto          /* Scroll hanya muncul saat konten melebihi tinggi */
+        h-auto
+        overflow-visible
         scrollbar-custom
         scroll-smooth
         pr-2
+        min-h-0
       "
     >
-      {/* Judul */}
-      <h1 className="text-3xl font-semibold text-white mb-3">{memory.title}</h1>
+      <h1 className="text-3xl font-semibold text-white mb-3">
+        {memory.title}
+      </h1>
 
-      {/* Container deskripsi + metadata + comment */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col overflow-visible min-h-0">
         {/* Deskripsi */}
         <div
           className="
@@ -52,7 +53,7 @@ export default function RightColumn({
             hover:opacity-100
             transition-all duration-200
             whitespace-pre-line
-            pr-6       /* <-- space antara teks dan scrollbar internal */
+            pr-6
           "
         >
           {memory.description}
@@ -76,33 +77,21 @@ export default function RightColumn({
             <span className="font-medium">{memory.uploader || "Anonim"}</span>
           </div>
 
-          <button
-            onClick={() => commentRef.current?.openModal()}
-            className="hover:underline"
-            aria-label="Buka komentar"
-          >
+          <button onClick={() => commentRef.current?.openModal()} className="hover:underline">
             Komentar
           </button>
 
-          <button
-            onClick={onEdit}
-            className="hover:underline text-sky-300"
-            aria-label="Sunting project"
-          >
+          <button onClick={onEdit} className="hover:underline text-sky-300">
             Sunting
           </button>
 
-          <button
-            onClick={onDelete}
-            className="hover:underline text-red-400"
-            aria-label="Hapus project"
-          >
+          <button onClick={onDelete} className="hover:underline text-red-400">
             Hapus
           </button>
         </div>
 
         {/* Comment Section */}
-        <div className="flex-1 overflow-y-auto scrollbar-custom px-2">
+        <div className="max-h-[420px] overflow-y-auto scrollbar-custom px-2">
           <CommentSection
             memoryId={memory.id}
             initialComments={comments}

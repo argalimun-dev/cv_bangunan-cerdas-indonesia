@@ -56,21 +56,16 @@ export default function MemoryCreatePage() {
       setLoading(true);
 
       try {
-        // ✅ Convert file → base64 (aman)
+        // Convert file → base64
         const arrayBuffer = await file.arrayBuffer();
         const bytes = new Uint8Array(arrayBuffer);
         let binary = "";
         const chunkSize = 0x8000;
-
         for (let i = 0; i < bytes.length; i += chunkSize) {
-          binary += String.fromCharCode(
-            ...bytes.subarray(i, i + chunkSize)
-          );
+          binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
         }
-
         const fileBase64 = btoa(binary);
 
-        // ✅ SELURUH PROSES LEWAT API SERVER
         const res = await fetch("/api/memory/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -105,85 +100,92 @@ export default function MemoryCreatePage() {
   );
 
   return (
-    <div className="w-full px-4 py-10 min-h-screen overflow-y-auto scrollbar-custom scroll-smooth">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold text-gray-200 mb-6">
+    <div className="w-full px-4 py-10 min-h-screen flex justify-center bg-gray-900/20 scrollbar-custom scroll-smooth">
+      <div className="max-w-3xl w-full flex flex-col gap-6">
+        <h1 className="text-2xl font-semibold text-gray-200 mb-2">
           Tambah Project Baru
         </h1>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl overflow-hidden"
+          className="flex flex-col flex-1 gap-4 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl overflow-hidden"
         >
-          {/* Judul */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Judul Project</label>
-            <input
-              type="text"
-              placeholder="Contoh: Kesetrum"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+          {/* Body scrollable */}
+          <div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-custom">
+            {/* Judul */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-400">Judul Project</label>
+              <input
+                type="text"
+                placeholder="Contoh: Kesetrum"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            {/* Deskripsi */}
+            <div className="flex flex-col gap-1 flex-1 min-h-[300px]">
+              <label className="text-sm text-gray-400">Deskripsi</label>
+              <textarea
+                ref={descRef}
+                placeholder="Tuliskan cerita singkat..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={5}  // default lebih tinggi
+                className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none overflow-y-auto scrollbar-custom"
+              />
+            </div>
           </div>
 
-          {/* Deskripsi */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Deskripsi</label>
-            <textarea
-              ref={descRef}
-              placeholder="Tuliskan cerita singkat..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none overflow-y-auto scrollbar-custom scroll-smooth"
-            />
-          </div>
+          {/* Footer: file + uploader + kode + submit */}
+          <div className="flex flex-col gap-4">
+            {/* File */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-400">Unggah Gambar</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="text-gray-300 file:bg-gray-800 file:border-0 
+                  file:px-4 file:py-2 file:rounded-lg file:cursor-pointer
+                  hover:file:bg-gray-700 transition"
+              />
+            </div>
 
-          {/* Gambar */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Unggah Gambar</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="text-gray-300 file:bg-gray-800 file:border-0 
-                file:px-4 file:py-2 file:rounded-lg file:cursor-pointer
-                hover:file:bg-gray-700 transition"
-            />
-          </div>
+            {/* Uploader */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-400">Nama Pengunggah</label>
+              <input
+                type="text"
+                placeholder="Anda ingin disebut apa"
+                value={uploader}
+                onChange={(e) => setUploader(e.target.value)}
+                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
 
-          {/* Uploader */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Nama Pengunggah</label>
-            <input
-              type="text"
-              placeholder="Anda ingin disebut apa"
-              value={uploader}
-              onChange={(e) => setUploader(e.target.value)}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
+            {/* Secret Code */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-400">Kode Rahasia</label>
+              <input
+                type="password"
+                placeholder="Masukkan kode..."
+                value={secretCode}
+                onChange={(e) => setSecretCode(e.target.value)}
+                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
 
-          {/* Kode */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Kode Rahasia</label>
-            <input
-              type="password"
-              placeholder="Masukkan kode..."
-              value={secretCode}
-              onChange={(e) => setSecretCode(e.target.value)}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-medium disabled:opacity-70"
+            >
+              {loading ? "Mengunggah..." : "Simpan Project"}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-medium disabled:opacity-70"
-          >
-            {loading ? "Mengunggah..." : "Simpan Project"}
-          </button>
         </form>
 
         <button

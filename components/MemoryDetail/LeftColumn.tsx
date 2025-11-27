@@ -28,11 +28,9 @@ export default function LeftColumn({ memory, onFullscreen, onBack }: Props) {
         <div
           className="
             w-full
-            h-[380px]
-            md:h-[410px]
-            lg:h-[460px]
-            xl:h-[510px]
-            2xl:h-[550px]
+            aspect-[3/4]
+            md:aspect-[4/5]
+            xl:aspect-[5/6]
             overflow-hidden
             flex items-center justify-center
           "

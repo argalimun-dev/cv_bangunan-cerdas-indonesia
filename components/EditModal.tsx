@@ -40,7 +40,7 @@ export default function EditModal({
     ta.style.height = "auto";
     ta.style.height = ta.scrollHeight + "px";
   }, [description]);
-  
+
   if (!isOpen) return null;
 
   return (
@@ -51,17 +51,21 @@ export default function EditModal({
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-3xl h-full md:h-auto md:max-h-[80vh] bg-gray-900 rounded-lg border border-gray-700 overflow-hidden shadow-xl"
+        className="
+          relative w-full max-w-3xl
+          h-full md:h-auto md:max-h-[90vh]  /* ✅ lebih tinggi modal */
+          bg-gray-900 rounded-lg border border-gray-700 shadow-xl flex flex-col overflow-hidden
+        "
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
           <h3 className="text-white text-lg font-semibold">Edit Project</h3>
-          <div className="w-6" /> {/* tempat kosong agar layout seimbang */}
+          <div className="w-6" /> {/* agar header balance */}
         </div>
 
         {/* Body scrollable */}
-        <div className="p-4 space-y-3 overflow-y-auto scrollbar-custom scroll-smooth max-h-[calc(80vh-60px)]">
+        <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-custom scroll-smooth">
           {/* Judul */}
           <label className="block text-sm text-gray-300">Judul</label>
           <input
@@ -78,8 +82,7 @@ export default function EditModal({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             disabled={loading}
-            rows={6}
-            className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white resize-none disabled:opacity-50 min-h-[120px] md:min-h-[150px]"
+            className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white resize-none min-h-[150px] md:min-h-[200px]"
           />
 
           {/* Pengunggah */}
@@ -90,19 +93,19 @@ export default function EditModal({
             disabled={loading}
             className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white disabled:opacity-50"
           />
+        </div>
 
-          {/* Upload File */}
-          <label className="block text-sm text-gray-300">Gambar Baru (opsional)</label>
+        {/* Footer + File input */}
+        <div className="p-4 border-t border-gray-800 bg-gray-900 flex flex-col md:flex-row md:justify-between gap-3">
           <input
             type="file"
             accept="image/*"
             disabled={loading}
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="w-full text-sm disabled:opacity-50"
+            className="w-full md:w-auto text-sm"
           />
 
-          {/* Buttons */}
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2">
             <button
               onClick={onCancel}
               disabled={loading}

@@ -113,24 +113,34 @@ export default function MemoryDetailPage() {
     <>
       <div
         className="
-          w-full max-w-[1400px] mx-auto
-          px-4 sm:px-6 py-4
+          w-full
+          pt-2 pb-4 px-1
+          md:pt-8 md:pb-2 md:pr-0 md:pl-2
           text-slate-100
-          grid grid-cols-1 md:grid-cols-[1.4fr_1fr] xl:grid-cols-[1.7fr_1fr]
-          gap-6 md:gap-10
+          grid
+          grid-cols-1
+          md:grid-cols-[1.4fr_0.5fr]  /* kolom desktop/tablet */
+          xl:grid-cols-[1.7fr_1fr]  /* kolom extra-large screen */
+          gap-y-4    /* jarak antar baris (vertikal) */
+          gap-x-1    /* jarak antar kolom (horizontal) */
+          md:gap-y-8 /* jarak antar baris di md ke atas */
+          md:gap-x-10 /* jarak antar kolom di md ke atas */
           relative
-          h-auto md:h-[calc(100vh-2rem)]
+          h-auto
+          min-h-0
         "
       >
         {/* LEFT COLUMN */}
-        <LeftColumn
-          memory={memory}
-          onFullscreen={() => setIsFullscreen(true)}
-          onBack={() => router.push("/memory")}
-        />
+        <div className="pt-2 pb-2 pr-2 pl-2 md:pb-2">
+          <LeftColumn
+            memory={memory}
+            onFullscreen={() => setIsFullscreen(true)}
+            onBack={() => router.push("/memory")}
+          />
+        </div>
 
         {/* RIGHT COLUMN */}
-        <div className="overflow-y-auto scrollbar-custom">
+        <div className="pt-2 pb-2 pr-0 pl-2 overflow-y-auto scrollbar-custom min-h-0">
           <RightColumn
             memory={memory}
             comments={comments}
