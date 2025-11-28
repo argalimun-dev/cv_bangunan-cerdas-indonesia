@@ -10,6 +10,7 @@ interface Props {
 }
 
 export default function FullscreenViewer({ imageUrl, title, onClose }: Props) {
+  const [autoAspect, setAutoAspect] = useState<string>("3 / 5");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -299,6 +300,9 @@ export default function FullscreenViewer({ imageUrl, title, onClose }: Props) {
     const img = imgRef.current;
     if (!img) return;
     const onLoad = () => {
+      const isLandscape = img.naturalWidth > img.naturalHeight;
+      // ✅ set aspect otomatis
+      setAutoAspect(isLandscape ? "5 / 3" : "3 / 5");
       // center image
       zoomRef.current = 1;
       posRef.current = { x: 0, y: 0 };
@@ -354,8 +358,11 @@ export default function FullscreenViewer({ imageUrl, title, onClose }: Props) {
           alt={title ?? "Image"}
           draggable={false}
           style={{
-            maxWidth: "90%",
+            width: "90%",
+            height: "auto",
             maxHeight: "90%",
+            aspectRatio: autoAspect,
+            objectFit: "contain",
             transform: "translate(0px, 0px) scale(1)",
             transition: "none",
             willChange: "transform",

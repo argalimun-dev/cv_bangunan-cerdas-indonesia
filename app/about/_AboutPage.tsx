@@ -60,7 +60,7 @@ export default function AboutPage() {
       phone: null,
       waLink: null,
       email: null,
-      role: "Desain & Dokumentasi",
+      role: "Desain & Instalatur",
     },
     {
       name: "Farid Farhan",
@@ -72,7 +72,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="min-h-screen px-4 sm:px-6 py-14 scrollbar-custom">
+    <main className="min-h-screen pt-4 pb-10 px-2 sm:py-6 sm:px-6 md:py-10 md:px-6 scrollbar-custom">
       <div className="max-w-3xl mx-auto space-y-10">
         {/* HERO LOGO FULL WIDTH */}
         <div className="flex justify-center mb-8 px-0">

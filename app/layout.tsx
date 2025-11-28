@@ -73,21 +73,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html
+      lang="id"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"   // ✅ FIX UNTUK WARNING NEXT.JS
+    >
       <body
         className="
-          scrollbar-custom
           font-geist
-          text-gray-200 min-h-screen antialiased
+          text-gray-200 
+          min-h-screen 
+          antialiased
           selection:bg-sky-400/40
           bg-gradient-to-b from-[#0b1623] via-[#05080c] to-black
         "
       >
+        {/* ✅ Scroll hanya di BODY, bukan di div lain */}
         <Navbar />
 
-        <main className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
+        <main className="pt-16 pb-10 px-0 sm:py-16 sm:px-2 md:py-16 md:px-2 lg:px-4">
           {children}
         </main>
       </body>

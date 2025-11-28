@@ -25,21 +25,20 @@ export default function LeftColumn({ memory, onFullscreen, onBack }: Props) {
         onClick={onFullscreen}
         aria-label="Perbesar gambar"
       >
-        <div
-          className="
-            w-full
-            aspect-[3/4]
-            md:aspect-[4/5]
-            xl:aspect-[5/6]
-            overflow-hidden
-            flex items-center justify-center
-          "
-        >
+        <div className="w-full max-h-[70vh] flex items-center justify-center overflow-hidden">
           <img
             loading="eager"
             src={memory.image_url}
             alt={memory.title || "Gambar Project CV. Bangunan Cerdas Indonesia"}
-            className="object-contain w-full h-full rounded-xl bg-black/20 backdrop-blur-sm"
+            className="
+              object-contain
+              w-auto
+              max-w-full
+              max-h-[70vh]
+              rounded-xl
+              bg-black/20
+              backdrop-blur-sm
+            "
           />
         </div>
       </div>

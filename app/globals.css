@@ -53,7 +53,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   overflow-x: hidden;
-  scroll-behavior: smooth; /* scroll smooth global */
+
+  /* ✅ SCROLL GLOBAL HANYA DI SINI */
+  scroll-behavior: smooth;
 }
 
 /* Anchor */
@@ -115,13 +117,12 @@ a {
 .animate-zoomIn { animation: zoomIn 0.28s cubic-bezier(0.16,1,0.3,1); }
 
 /* =======================
-   SCROLLBAR CUSTOM (DARK THEME)
+   SCROLLBAR CUSTOM (UNTUK DIV SAJA, BUKAN BODY)
    ======================= */
 
-/* Scrollbar global utility */
 .scrollbar-custom::-webkit-scrollbar {
   width: 6px;
-  height: 6px; /* horizontal scrollbar */
+  height: 6px;
 }
 
 .scrollbar-custom::-webkit-scrollbar-track {
@@ -135,13 +136,13 @@ a {
   border: 2px solid rgba(15,23,42,0.0);
 }
 
+/* ✅ TIDAK LAGI MENGATUR SCROLL-BEHAVIOR DI SINI */
 .scrollbar-custom {
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: rgba(255,255,255,0.2) var(--surface); /* Firefox */
-  scroll-behavior: smooth;
 }
 
-/* Mobile & touch devices: force smooth scroll for overflow divs */
+/* Mobile: momentum scroll hanya untuk overflow div jika ada */
 @media (pointer: coarse) {
   .scrollbar-custom {
     -webkit-overflow-scrolling: touch;
@@ -149,7 +150,7 @@ a {
 }
 
 /* =========================================================
-   FORCE OVERRIDE TAILWIND — GLOBAL VIEWPORT SCROLLBAR
+   GLOBAL VIEWPORT SCROLLBAR (HTML & BODY SAJA)
    ========================================================= */
 
 html::-webkit-scrollbar,
@@ -169,7 +170,8 @@ body::-webkit-scrollbar-thumb {
 }
 
 /* Firefox */
-html, body {
+html,
+body {
   scrollbar-width: thin !important;
   scrollbar-color: rgba(255, 255, 255, 0.25) var(--surface) !important;
 }

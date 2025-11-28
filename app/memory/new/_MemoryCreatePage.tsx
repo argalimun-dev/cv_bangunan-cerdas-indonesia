@@ -111,7 +111,7 @@ export default function MemoryCreatePage() {
       }
 
       alert("✅ Berhasil menambahkan Project 🎉");
-      router.replace("/memory");
+      router.push("/memory");
       router.refresh();
     } catch (err: any) {
       console.error("CREATE ERROR:", err);

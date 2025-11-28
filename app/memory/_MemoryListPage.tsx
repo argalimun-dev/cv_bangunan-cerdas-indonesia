@@ -15,9 +15,11 @@ export default function MemoryListPage({
   memories: Memory[];
 }) {
   return (
-    <main className="h-screen w-full flex flex-col overflow-hidden text-gray-100">
-      {/* HEADER */}
-      <header className="shrink-0 w-full text-center pt-6 pb-6 bg-gray-900/10 backdrop-blur-md border-b border-white/5">
+    // ✅ BUKAN <main> → supaya tidak nested dengan <main> di layout.tsx
+    <div className="w-full flex flex-col text-gray-100">
+      
+      {/* ✅ HEADER STICKY — TIDAK IKUT SCROLL */}
+      <header className="shrink-0 w-full text-center pt-10 pb-6 bg-gray-900/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-40">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
           Smart Project Wall
         </h1>
@@ -26,10 +28,10 @@ export default function MemoryListPage({
         </p>
       </header>
 
-      {/* BODY */}
-      <div className="flex-1 w-full overflow-y-auto scrollbar-custom">
+      {/* ✅ BODY — TANPA SCROLLBAR INTERNAL */}
+      <div className="w-full">
         {memories.length === 0 && (
-          <div className="h-full flex items-center justify-center text-gray-500 text-center px-4">
+          <div className="min-h-[60vh] flex items-center justify-center text-gray-500 text-center px-4">
             Belum ada Project 😢
           </div>
         )}
@@ -62,6 +64,6 @@ export default function MemoryListPage({
           </section>
         )}
       </div>
-    </main>
+    </div>
   );
 }

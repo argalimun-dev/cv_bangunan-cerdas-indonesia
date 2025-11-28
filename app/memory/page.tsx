@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { supabaseServer } from "@/lib/supabaseServer";
 import MemoryListPage from "./_MemoryListPage";
 
-export const revalidate = 60; // ISR 1 menit
+export const revalidate = 10; // ISR 10 detik
 
 export async function generateMetadata(): Promise<Metadata> {
   const { data, error } = await supabaseServer
