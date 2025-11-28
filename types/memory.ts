@@ -2,10 +2,12 @@
 
 export interface MemoryShape {
   id: string;
-  title: string;
+  title?: string;
   description?: string;
   uploader?: string;
   image_url?: string;
+  file?: File;
+  secretCode: string;
   og_file_name?: string;
   created_at?: string;
   [key: string]: any;

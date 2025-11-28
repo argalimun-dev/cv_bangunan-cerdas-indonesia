@@ -1,17 +1,20 @@
-// app/memory/[id]/page.tsx
-import { Metadata } from "next";
-import { supabase } from "@/lib/supabaseClient";
+import type { Metadata } from "next";
+import { supabaseServer } from "@/lib/supabaseServer";
 import MemoryDetailPage from "./_MemoryDetailPage";
 
-// ⚠ params sekarang bisa Promise
-interface PageParams {
-  params?: Promise<{ id?: string }>;
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata(pageProps: PageParams): Promise<Metadata> {
+// ============================
+// ✅ SERVER SEO METADATA
+// ============================
+export async function generateMetadata(
+  props: PageProps
+): Promise<Metadata> {
   try {
-    const params = pageProps.params ? await pageProps.params : undefined;
-    const memoryId = params?.id;
+    const params = await props.params; // ✅ WAJIB await
+    const memoryId = params.id;
 
     if (!memoryId) {
       return {
@@ -20,7 +23,7 @@ export async function generateMetadata(pageProps: PageParams): Promise<Metadata>
       };
     }
 
-    const { data: mem } = await supabase
+    const { data: mem } = await supabaseServer
       .from("memories")
       .select("*")
       .eq("id", memoryId)
@@ -33,20 +36,29 @@ export async function generateMetadata(pageProps: PageParams): Promise<Metadata>
       };
     }
 
-    // Gunakan OG image yang sudah di-generate, fallback ke default
-    const ogImageUrl = mem.og_file_name || "/og/default.webp";
+    const ogImageUrl = mem.og_file_name
+      mem.og_file_name && mem.og_file_name.startsWith("http")
+        ? mem.og_file_name
+        : "/og/default.webp";
 
     return {
       title: `${mem.title} | Smart Project Wall`,
-      description: mem.description || "Detail project CV. Bangunan Cerdas Indonesia",
+      description:
+        mem.description || "Detail Project CV. Bangunan Cerdas Indonesia",
       openGraph: {
         title: mem.title,
         description: mem.description || "CV. Bangunan Cerdas Indonesia",
         url: `https://cv-bangunan-cerdas-indonesia.vercel.app/memory/${mem.id}`,
         siteName: "Smart Project Wall",
         locale: "id_ID",
-        type: "website",
-        images: [{ url: ogImageUrl, width: 600, height: 315 }],
+        type: "article",
+        images: [
+          {
+            url: ogImageUrl,
+            width: 600,
+            height: 315,
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
@@ -66,6 +78,10 @@ export async function generateMetadata(pageProps: PageParams): Promise<Metadata>
   }
 }
 
-export default function Page() {
-  return <MemoryDetailPage />;
+// ============================
+// ✅ SERVER PAGE WRAPPER
+// ============================
+export default async function Page(props: PageProps) {
+  const params = await props.params; // ✅ WAJIB await
+  return <MemoryDetailPage id={params.id} />;
 }

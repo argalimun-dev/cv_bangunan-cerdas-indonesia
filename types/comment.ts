@@ -4,17 +4,20 @@ export interface CommentShape {
   text: string;
   created_at: string;
 
-  // untuk komentar utama
+  // scope data
+  memory_id?: string | null; // ✅ PENTING (BARU)
+
+  // komentar utama
   commenter?: string | null;
 
-  // untuk reply
+  // reply
   name?: string | null;
 
   // kepemilikan / device
   device_identity?: string | null;
 
-  // parent_id opsional
+  // relasi parent
   parent_id?: string | null;
 
-  [key: string]: any; // fleksibel untuk field tambahan
+  [key: string]: any; // tetap fleksibel
 }

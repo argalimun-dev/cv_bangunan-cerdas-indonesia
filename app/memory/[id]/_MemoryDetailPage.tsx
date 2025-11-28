@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import LeftColumn from "@/components/MemoryDetail/LeftColumn";
 import RightColumn from "@/components/MemoryDetail/RightColumn";
@@ -16,18 +16,22 @@ import useScrollLock from "@/hooks/useScrollLock";
 
 import { deleteMemory, updateMemory } from "@/services/memoryService";
 
-export default function MemoryDetailPage() {
+interface MemoryDetailPageProps {
+  id: string;
+}
+
+export default function MemoryDetailPage({ id }: MemoryDetailPageProps) {
   const router = useRouter();
-  const params = useParams();
-  const memoryId = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const memoryId = id;
 
   const commentRef = useRef<CommentSectionRef>(null);
 
-  // Hooks
   const { memory, comments, loading, updateMemoryState } = useMemoryDetail(memoryId);
   const deviceIdentity = useDeviceIdentity();
 
-  // Modal states
+  // ----------------------
+  // Modal States
+  // ----------------------
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [secretCode, setSecretCode] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -43,9 +47,9 @@ export default function MemoryDetailPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   useScrollLock(isFullscreen);
 
-  // -------------------------
+  // ----------------------
   // DELETE MEMORY
-  // -------------------------
+  // ----------------------
   const handleDelete = async () => {
     if (!memory) return;
     if (!secretCode.trim()) {
@@ -69,11 +73,16 @@ export default function MemoryDetailPage() {
     }
   };
 
-  // -------------------------
-  // UPDATE MEMORY (FINAL REALTIME)
-  // -------------------------
-  const handleUpdateMemory = async () => {
+  // ----------------------
+  // UPDATE MEMORY (FINAL REALTIME) dengan Secret Code
+  // ----------------------
+  const handleUpdateMemory = async (secretCode: string) => {
     if (!memory) return;
+
+    if (!secretCode.trim()) {
+      alert("Masukkan kode rahasia!");
+      return;
+    }
 
     try {
       setEditLoading(true);
@@ -83,13 +92,11 @@ export default function MemoryDetailPage() {
         description: editDescription,
         uploader: editUploader,
         file: editImageFile,
+        secretCode, // ✅ kirim secret code ke service
       });
 
       alert("Berhasil disimpan!");
-      
-      // ✅ Update state di hook supaya re-render otomatis
       updateMemoryState(updated.data);
-
       setShowEditModal(false);
     } catch (err: any) {
       alert(`Gagal menyimpan perubahan: ${err.message || ""}`);
@@ -111,25 +118,7 @@ export default function MemoryDetailPage() {
 
   return (
     <>
-      <div
-        className="
-          w-full
-          pt-2 pb-4 px-1
-          md:pt-8 md:pb-2 md:pr-0 md:pl-2
-          text-slate-100
-          grid
-          grid-cols-1
-          md:grid-cols-[1.4fr_0.5fr]  /* kolom desktop/tablet */
-          xl:grid-cols-[1.7fr_1fr]  /* kolom extra-large screen */
-          gap-y-4    /* jarak antar baris (vertikal) */
-          gap-x-1    /* jarak antar kolom (horizontal) */
-          md:gap-y-8 /* jarak antar baris di md ke atas */
-          md:gap-x-10 /* jarak antar kolom di md ke atas */
-          relative
-          h-auto
-          min-h-0
-        "
-      >
+      <div className="w-full pt-2 pb-4 px-1 md:pt-8 md:pb-2 md:pr-0 md:pl-2 text-slate-100 grid grid-cols-1 md:grid-cols-[1.4fr_0.5fr] xl:grid-cols-[1.7fr_1fr] gap-y-4 gap-x-1 md:gap-y-8 md:gap-x-10 relative h-auto min-h-0">
         {/* LEFT COLUMN */}
         <div className="pt-2 pb-2 pr-2 pl-2 md:pb-2">
           <LeftColumn
@@ -166,6 +155,7 @@ export default function MemoryDetailPage() {
         />
       )}
 
+      {/* DELETE MODAL */}
       <DeleteModal
         isOpen={showDeleteModal}
         secretCode={secretCode}
@@ -178,6 +168,7 @@ export default function MemoryDetailPage() {
         onConfirm={handleDelete}
       />
 
+      {/* EDIT MODAL dengan Secret Code */}
       <EditModal
         isOpen={showEditModal}
         title={editTitle}
@@ -192,7 +183,7 @@ export default function MemoryDetailPage() {
           setShowEditModal(false);
           setEditImageFile(null);
         }}
-        onSave={handleUpdateMemory}
+        onSave={handleUpdateMemory} // ✅ sekarang menerima secretCode dari modal
         loading={editLoading}
       />
     </>

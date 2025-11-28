@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from "react";
 import CommentList from "./CommentList";
 import CommentModal from "./CommentModal";
 import { supabase } from "@/lib/supabaseClient";
@@ -22,15 +22,16 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
     const [replies, setReplies] = useState<Record<string, CommentShape[]>>({});
 
     const [replyToId, setReplyToId] = useState<string | null>(null);
-    const [replyText, setReplyText] = useState<string>("");
-    const [replyName, setReplyName] = useState<string>("");
+    const [replyText, setReplyText] = useState("");
+    const [replyName, setReplyName] = useState("");
 
     const [editId, setEditId] = useState<string | null>(null);
-    const [editText, setEditText] = useState<string>("");
+    const [editText, setEditText] = useState("");
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalText, setModalText] = useState("");
     const [modalName, setModalName] = useState("");
+
     const [sending, setSending] = useState(false);
 
     useImperativeHandle(ref, () => ({
@@ -39,53 +40,72 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       },
     }));
 
-    const buildRepliesMap = (allComments: CommentShape[]) => {
+    // ✅ Utility tidak berubah secara perilaku
+    const buildRepliesMap = useCallback((all: CommentShape[]) => {
       const map: Record<string, CommentShape[]> = {};
-      allComments.forEach((c) => {
+      all.forEach((c) => {
         if (c.parent_id) {
           if (!map[c.parent_id]) map[c.parent_id] = [];
           map[c.parent_id].push(c);
         }
       });
       return map;
-    };
+    }, []);
 
-    const refresh = async () => {
-      const { data: commentData } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("memory_id", memoryId)
-        .order("created_at", { ascending: true });
+    // ✅ Refresh aman (tidak di-paralelkan, tidak over-filter)
+    const refresh = useCallback(async () => {
+      try {
+        const { data: commentData, error: cErr } = await supabase
+          .from("comments")
+          .select("*")
+          .eq("memory_id", memoryId)
+          .order("created_at", { ascending: true });
 
-      const { data: replyData } = await supabase
-        .from("reply_comments")
-        .select("*")
-        .order("created_at", { ascending: true });
+        const { data: replyData, error: rErr } = await supabase
+          .from("reply_comments")
+          .select("*")
+          .order("created_at", { ascending: true });
 
-      const internalComments: CommentShape[] = [];
+        if (cErr || rErr) {
+          console.error("CommentSection.refresh error", { cErr, rErr });
+          return;
+        }
 
-      commentData?.forEach((c: any) =>
-        internalComments.push({ ...c, parent_id: null })
-      );
-      replyData?.forEach((r: any) =>
-        internalComments.push({ ...r, parent_id: r.parent_comment_id, commenter: r.name })
-      );
+        const internal: CommentShape[] = [];
 
-      setComments(internalComments.filter((c) => !c.parent_id));
-      setReplies(buildRepliesMap(internalComments));
-    };
+        commentData?.forEach((c: any) => {
+          internal.push({ ...c, parent_id: null });
+        });
 
-    useEffect(() => {
-      if (initialComments?.length) {
-        const internal: CommentShape[] = initialComments.map((c) => ({
-          ...c,
-          parent_id: (c as any).parent_id ?? null,
-        }));
+        replyData?.forEach((r: any) => {
+          internal.push({
+            ...r,
+            parent_id: r.parent_comment_id,
+            commenter: r.name,
+          });
+        });
+
         setComments(internal.filter((c) => !c.parent_id));
         setReplies(buildRepliesMap(internal));
+      } catch (err) {
+        console.error("CommentSection.refresh fatal", err);
       }
-    }, [initialComments]);
+    }, [memoryId, buildRepliesMap]);
 
+    // ✅ Hydration awal tetap dipertahankan
+    useEffect(() => {
+      if (!initialComments?.length) return;
+
+      const internal: CommentShape[] = initialComments.map((c) => ({
+        ...c,
+        parent_id: (c as any).parent_id ?? null,
+      }));
+
+      setComments(internal.filter((c) => !c.parent_id));
+      setReplies(buildRepliesMap(internal));
+    }, [initialComments, buildRepliesMap]);
+
+    // ✅ Kirim komentar utama
     const onSendComment = async () => {
       if (!modalText.trim()) return;
       setSending(true);
@@ -112,6 +132,7 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       setEditText("");
     };
 
+    // ✅ Kirim reply
     const onSendReply = async (parentId: string, text: string, name?: string) => {
       if (!text.trim()) return;
       setSending(true);
@@ -127,7 +148,6 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       setReplyToId(null);
       setReplyText("");
       setReplyName("");
-
       refresh();
     };
 
@@ -135,15 +155,17 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       if (editId === c.id) {
         setEditId(null);
         setEditText("");
-      } else {
-        setEditId(c.id);
-        setEditText(c.text);
-        setReplyToId(null);
-        setReplyText("");
-        setReplyName("");
+        return;
       }
+
+      setEditId(c.id);
+      setEditText(c.text);
+      setReplyToId(null);
+      setReplyText("");
+      setReplyName("");
     };
 
+    // ✅ Update parent / reply tetap aman
     const onUpdate = async (id: string, newText: string) => {
       if (!newText.trim()) return;
       setSending(true);
@@ -166,10 +188,10 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       setSending(false);
       setEditId(null);
       setEditText("");
-
       refresh();
     };
 
+    // ✅ Delete aman
     const onDelete = async (id: string, isParent?: boolean) => {
       setSending(true);
 
@@ -188,27 +210,25 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       <div className="space-y-3 mt-4">
         <h3 className="text-md font-semibold text-white">Komentar</h3>
 
-        <div className="space-y-2">
-          <CommentList
-            comments={comments}
-            replies={replies}
-            deviceIdentity={deviceIdentity}
-            onStartReply={onStartReply}
-            onSendReply={onSendReply}
-            onStartEdit={onStartEdit}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
-            editId={editId}
-            editText={editText}
-            setEditText={setEditText}
-            replyToId={replyToId}
-            replyText={replyText}
-            setReplyText={setReplyText}
-            replyName={replyName}
-            setReplyName={setReplyName}
-            sending={sending}
-          />
-        </div>
+        <CommentList
+          comments={comments}
+          replies={replies}
+          deviceIdentity={deviceIdentity}
+          onStartReply={onStartReply}
+          onSendReply={onSendReply}
+          onStartEdit={onStartEdit}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          editId={editId}
+          editText={editText}
+          setEditText={setEditText}
+          replyToId={replyToId}
+          replyText={replyText}
+          setReplyText={setReplyText}
+          replyName={replyName}
+          setReplyName={setReplyName}
+          sending={sending}
+        />
 
         <CommentModal
           open={modalOpen}

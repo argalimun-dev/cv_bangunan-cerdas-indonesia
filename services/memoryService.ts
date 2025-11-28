@@ -2,10 +2,11 @@
 
 export interface UpdateMemoryParams {
   id: string;
-  title?: string;          // ✅ TIDAK WAJIB
-  description?: string;    // ✅ TIDAK WAJIB
-  uploader: string;
-  file?: File | null;
+  title?: string;          // ✅ opsional
+  description?: string;    // ✅ opsional
+  uploader: string;        // ✅ wajib
+  file?: File | null;      // ✅ opsional
+  secretCode?: string;     // ✅ opsional: bisa update tanpa kode rahasia
 }
 
 // ================================
@@ -53,6 +54,7 @@ export async function updateMemory({
   description,
   uploader,
   file,
+  secretCode,
 }: UpdateMemoryParams) {
   if (!id) throw new Error("Memory ID invalid");
   if (!uploader?.trim()) throw new Error("Uploader wajib diisi");
@@ -69,11 +71,12 @@ export async function updateMemory({
   }
 
   // ✅ PAYLOAD AMAN: hanya kirim field yang ada
-  const payload: any = {
+  const payload: { [key: string]: any } = {
     id,
     uploader,
   };
 
+  if (secretCode?.trim()) payload.secretCode = secretCode; // ✅ kirim secretCode hanya kalau ada
   if (title !== undefined) payload.title = title;
   if (description !== undefined) payload.description = description;
   if (fileBase64 && fileName && fileType) {

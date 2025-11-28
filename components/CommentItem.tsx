@@ -52,9 +52,18 @@ export default function CommentItem({
   const isEditing = editId === comment.id;
   const isReplying = replyToId === comment.id;
 
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   return (
     <div className="space-y-2 text-sm">
-      {/* MAIN COMMENT */}
+      {/* ================= MAIN COMMENT ================= */}
       <div className="flex flex-col gap-1">
         {isEditing ? (
           <>
@@ -64,6 +73,7 @@ export default function CommentItem({
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
               rows={2}
             />
+
             <div className="flex gap-2 justify-end mt-1">
               <button
                 onClick={() => onStartEdit(comment)}
@@ -71,9 +81,11 @@ export default function CommentItem({
               >
                 Batal
               </button>
+
               <button
                 onClick={() => onUpdate(comment.id, editText || "")}
                 className="px-2 py-1 bg-green-600 rounded text-white hover:bg-green-500"
+                disabled={sending}
               >
                 Simpan
               </button>
@@ -81,15 +93,39 @@ export default function CommentItem({
           </>
         ) : (
           <>
-            <p className="text-gray-200 whitespace-pre-line leading-relaxed">{comment.text}</p>
+            <p className="text-gray-200 whitespace-pre-line leading-relaxed">
+              {comment.text}
+            </p>
+
             <div className="flex items-center gap-2 flex-wrap text-gray-400">
-              <span className="font-semibold text-gray-200">{comment.commenter || "Anonim"}</span>
-              <span>· {new Date(comment.created_at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
-              <button onClick={() => onStartReply(comment.id)} className="text-sky-300 hover:text-sky-200">Reply</button>
+              <span className="font-semibold text-gray-200">
+                {comment.commenter || "Anonim"}
+              </span>
+
+              <span>· {formatDate(comment.created_at)}</span>
+
+              <button
+                onClick={() => onStartReply(comment.id)}
+                className="text-sky-300 hover:text-sky-200"
+              >
+                Reply
+              </button>
+
               {isOwner && (
                 <>
-                  <button onClick={() => onStartEdit(comment)} className="text-blue-400 hover:text-blue-300">Edit</button>
-                  <button onClick={() => onDelete(comment.id, true)} className="text-red-400 hover:text-red-300">Hapus</button>
+                  <button
+                    onClick={() => onStartEdit(comment)}
+                    className="text-blue-400 hover:text-blue-300"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => onDelete(comment.id, true)}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    Hapus
+                  </button>
                 </>
               )}
             </div>
@@ -97,7 +133,7 @@ export default function CommentItem({
         )}
       </div>
 
-      {/* REPLY BOX */}
+      {/* ================= REPLY INPUT ================= */}
       {isReplying && (
         <div className="ml-4 sm:ml-6 flex flex-col gap-1">
           <textarea
@@ -107,39 +143,106 @@ export default function CommentItem({
             placeholder="Tulis balasan..."
             rows={2}
           />
+
           <input
             value={replyName || ""}
             onChange={(e) => setReplyName?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
             placeholder="Nama kamu..."
           />
+
           <div className="flex gap-2 mt-1 justify-end">
-            <button onClick={() => { setReplyText?.(""); setReplyName?.(""); }} className="text-gray-300 hover:underline">Batal</button>
-            <button onClick={() => onSendReply(comment.id, replyText || "", replyName || "")} disabled={sending} className="text-sky-500 hover:underline">
+            <button
+              onClick={() => {
+                setReplyText?.("");
+                setReplyName?.("");
+              }}
+              className="text-gray-300 hover:underline"
+            >
+              Batal
+            </button>
+
+            <button
+              onClick={() =>
+                onSendReply(comment.id, replyText || "", replyName || "")
+              }
+              disabled={sending}
+              className="text-sky-500 hover:underline disabled:opacity-60"
+            >
               {sending ? "Mengirim..." : "Balas"}
             </button>
           </div>
         </div>
       )}
 
-      {/* REPLIES */}
+      {/* ================= REPLIES LIST ================= */}
       {replies.length > 0 && (
         <div className="ml-4 sm:ml-6 space-y-2">
           {replies.map((r) => {
             const isReplyOwner = deviceIdentity === r.device_identity;
+            const isReplyEditing = editId === r.id;
+
             return (
               <div key={r.id} className="flex flex-col gap-1">
-                <p className="text-gray-200 whitespace-pre-line leading-relaxed">{r.text}</p>
-                <div className="flex items-center gap-2 flex-wrap text-gray-400">
-                  <span className="font-semibold text-gray-200">{r.name || "Anonim"}</span>
-                  <span>· {new Date(r.created_at).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
-                  {isReplyOwner && (
-                    <>
-                      <button onClick={() => onStartEdit(r)} className="text-blue-400 hover:text-blue-300">Edit</button>
-                      <button onClick={() => onDelete(r.id, false)} className="text-red-400 hover:text-red-300">Hapus</button>
-                    </>
-                  )}
-                </div>
+                {isReplyEditing ? (
+                  <>
+                    <textarea
+                      value={editText || ""}
+                      onChange={(e) => setEditText?.(e.target.value)}
+                      className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
+                      rows={2}
+                    />
+
+                    <div className="flex gap-2 justify-end mt-1">
+                      <button
+                        onClick={() => onStartEdit(r)}
+                        className="px-2 py-1 text-gray-300 rounded border border-gray-600 hover:bg-gray-700"
+                      >
+                        Batal
+                      </button>
+
+                      <button
+                        onClick={() => onUpdate(r.id, editText || "")}
+                        className="px-2 py-1 bg-green-600 rounded text-white hover:bg-green-500"
+                        disabled={sending}
+                      >
+                        Simpan
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-gray-200 whitespace-pre-line leading-relaxed">
+                      {r.text}
+                    </p>
+
+                    <div className="flex items-center gap-2 flex-wrap text-gray-400">
+                      <span className="font-semibold text-gray-200">
+                        {r.name || "Anonim"}
+                      </span>
+
+                      <span>· {formatDate(r.created_at)}</span>
+
+                      {isReplyOwner && (
+                        <>
+                          <button
+                            onClick={() => onStartEdit(r)}
+                            className="text-blue-400 hover:text-blue-300"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => onDelete(r.id, false)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            Hapus
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}

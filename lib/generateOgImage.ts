@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 export async function generateOgImageToSupabase(
   inputBuffer: Buffer,
@@ -12,7 +12,7 @@ export async function generateOgImageToSupabase(
 
   const ogPath = `og/${memoryId}.webp`;
 
-  const { error } = await supabase.storage
+  const { error } = await supabaseServer.storage
     .from("images")
     .upload(ogPath, ogBuffer, {
       contentType: "image/webp",
@@ -21,9 +21,9 @@ export async function generateOgImageToSupabase(
 
   if (error) throw error;
 
-  const { data } = supabase.storage
+  const { data } = supabaseServer.storage
     .from("images")
     .getPublicUrl(ogPath);
 
-  return data.publicUrl; // ✅ INI YANG NANTI MASUK ke og_file_name
+  return data.publicUrl;
 }

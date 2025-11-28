@@ -1,44 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
     const { memoryId, secretCode } = await req.json();
-    if (!memoryId || !secretCode?.trim()) return NextResponse.json({ error: "Memory ID atau kode rahasia hilang" }, { status: 400 });
 
-    // Validasi kode
-    const { data: validCode, error: codeErr } = await supabase
+    if (!memoryId || !secretCode?.trim()) {
+      return NextResponse.json(
+        { error: "Memory ID atau kode rahasia hilang" },
+        { status: 400 }
+      );
+    }
+
+    const { data: validCode } = await supabaseServer
       .from("access_codes")
       .select("id")
       .ilike("code", secretCode.trim())
       .single();
 
-    if (codeErr || !validCode) return NextResponse.json({ error: "Kode rahasia salah" }, { status: 403 });
+    if (!validCode) {
+      return NextResponse.json({ error: "Kode rahasia salah" }, { status: 403 });
+    }
 
-    // Hapus komentar & reply
-    const { data: commentRows } = await supabase.from("comments").select("id").eq("memory_id", memoryId);
-    const commentIds = commentRows?.map(c => c.id) || [];
-    if (commentIds.length > 0) await supabase.from("reply_comments").delete().in("parent_comment_id", commentIds);
-    await supabase.from("comments").delete().eq("memory_id", memoryId);
+    const { data: commentRows } = await supabaseServer
+      .from("comments")
+      .select("id")
+      .eq("memory_id", memoryId);
 
-    // Ambil image & OG URL
-    const { data: memData } = await supabase.from("memories").select("image_url, og_file_name").eq("id", memoryId).single();
-    if (!memData) return NextResponse.json({ error: "Memory tidak ditemukan" }, { status: 404 });
+    const commentIds = commentRows?.map((c) => c.id) || [];
 
-    const imagePath = memData.image_url?.split("/storage/v1/object/public/images/")[1];
-    if (imagePath) await supabase.storage.from("images").remove([imagePath]);
+    if (commentIds.length > 0) {
+      await supabaseServer
+        .from("reply_comments")
+        .delete()
+        .in("parent_comment_id", commentIds);
+    }
 
-    const ogPath = memData.og_file_name?.split("/storage/v1/object/public/images/")[1];
-    if (ogPath) await supabase.storage.from("images").remove([ogPath]);
+    await supabaseServer.from("comments").delete().eq("memory_id", memoryId);
 
-    // Hapus memory
-    await supabase.from("memories").delete().eq("id", memoryId);
+    const { data: memData } = await supabaseServer
+      .from("memories")
+      .select("image_url, og_file_name")
+      .eq("id", memoryId)
+      .single();
+
+    if (!memData) {
+      return NextResponse.json({ error: "Memory tidak ditemukan" }, { status: 404 });
+    }
+
+    const imagePath = memData.image_url?.split(
+      "/storage/v1/object/public/images/"
+    )[1];
+    if (imagePath) {
+      await supabaseServer.storage.from("images").remove([imagePath]);
+    }
+
+    const ogPath = memData.og_file_name?.split(
+      "/storage/v1/object/public/images/"
+    )[1];
+    if (ogPath) {
+      await supabaseServer.storage.from("images").remove([ogPath]);
+    }
+
+    await supabaseServer.from("memories").delete().eq("id", memoryId);
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     console.error("MEMORY DELETE ERROR:", err);
-    return NextResponse.json({ error: err.message || "Gagal menghapus memory" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message || "Gagal menghapus memory" },
+      { status: 500 }
+    );
   }
 }

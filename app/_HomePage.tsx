@@ -1,111 +1,119 @@
-"use client";
 import Link from "next/link";
-import Head from "next/head"; // import Head untuk SEO
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+  description:
+    "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
+
+  keywords: [
+    "CV Bangunan Cerdas Indonesia",
+    "Smart Project Wall",
+    "Galeri Project",
+    "Manajemen Project",
+    "Dokumentasi Proyek",
+  ],
+
+  openGraph: {
+    title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+    description:
+      "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
+    url: "/",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-home.png",
+        width: 1200,
+        height: 630,
+        alt: "Smart Project Wall - CV. Bangunan Cerdas Indonesia",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+    description:
+      "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
+    images: ["/images/og-home.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function HomePage() {
   return (
-    <>
-      {/* ======================
-            SEO TAGS
-         ====================== */}
-      <Head>
-        <title>Smart Project Wall | CV. Bangunan Cerdas Indonesia</title>
-        <meta
-          name="description"
-          content="Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern."
-        />
-
-        {/* Open Graph / Social Preview */}
-        <meta property="og:title" content="Smart Project Wall | CV. Bangunan Cerdas Indonesia" />
-        <meta
-          property="og:description"
-          content="Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cv-bangunan-cerdas-indonesia.vercel.app/" />
-        <meta property="og:image" content="/images/og-home.png" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Smart Project Wall | CV. Bangunan Cerdas Indonesia" />
-        <meta
-          name="twitter:description"
-          content="Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern."
-        />
-        <meta name="twitter:image" content="/images/og-home.png" />
-      </Head>
-
-      {/* ======================
-            PAGE CONTENT
-         ====================== */}
-      <main
+    <main
+      className="
+        flex flex-col items-center justify-center 
+        min-h-[80vh] w-full 
+        px-6 text-center 
+        animate-fadeIn
+      "
+    >
+      <h1
         className="
-          flex flex-col items-center justify-center 
-          min-h-[80vh] w-full 
-          px-6 text-center 
-          animate-fadeIn
+          text-4xl sm:text-6xl md:text-7xl 
+          font-semibold tracking-tight 
+          bg-gradient-to-r from-sky-400 to-blue-500 
+          bg-clip-text text-transparent 
+          drop-shadow-xl select-none
+          max-w-3xl leading-[1.15]
         "
       >
-        {/* 🌟 HEADLINE */}
-        <h1
+        Selamat Datang di Smart Project Wall
+      </h1>
+
+      <p
+        className="
+          text-gray-400 text-base sm:text-lg 
+          max-w-2xl mt-6 mb-10 leading-relaxed
+        "
+      >
+        Platform Galeri Pemasaran Digital Interaktif <br />
+        <span className="text-sky-400 font-medium">
+          CV. Bangunan Cerdas Indonesia
+        </span>
+        <br />
+        Simpan, kelola dan tampilkan setiap Project dengan tampilan modern ✨
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Link
+          href="/memory"
           className="
-            text-4xl sm:text-6xl md:text-7xl 
-            font-semibold tracking-tight 
-            bg-gradient-to-r from-sky-400 to-blue-500 
-            bg-clip-text text-transparent 
-            drop-shadow-xl select-none
-            max-w-3xl leading-[1.15]
+            px-8 py-3 
+            rounded-xl text-lg font-medium 
+            bg-sky-600 hover:bg-sky-500 
+            transition-all duration-200 
+            shadow-lg hover:shadow-sky-600/30 
+            transform hover:scale-[1.04] active:scale-[0.98]
           "
         >
-          Selamat Datang di Smart Project Wall
-        </h1>
+          🚀 Smart Project Wall
+        </Link>
 
-        {/* ✨ Subheadline */}
-        <p
+        <Link
+          href="/about"
           className="
-            text-gray-400 text-base sm:text-lg 
-            max-w-2xl mt-6 mb-10 leading-relaxed
+            px-8 py-3 
+            rounded-xl text-lg font-medium 
+            bg-green-600 hover:bg-green-500 
+            transition-all duration-200 
+            shadow-lg hover:shadow-green-600/30 
+            transform hover:scale-[1.04] active:scale-[0.98]
           "
         >
-          Platform Galeri Pemasaran Digital Interaktif <br />
-          <span className="text-sky-400 font-medium">
-            CV. Bangunan Cerdas Indonesia
-          </span>
-          <br />
-          Simpan, kelola dan tampilkan setiap Project dengan tampilan modern ✨
-        </p>
-
-        {/* 🚀 CTA */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/memory"
-            className="
-              px-8 py-3 
-              rounded-xl text-lg font-medium 
-              bg-sky-600 hover:bg-sky-500 
-              transition-all duration-200 
-              shadow-lg hover:shadow-sky-600/30 
-              transform hover:scale-[1.04] active:scale-[0.98]
-            "
-          >
-            🚀 Smart Project Wall
-          </Link>
-
-          <Link
-            href="/about"
-            className="
-              px-8 py-3 
-              rounded-xl text-lg font-medium 
-              bg-green-600 hover:bg-green-500 
-              transition-all duration-200 
-              shadow-lg hover:shadow-green-600/30 
-              transform hover:scale-[1.04] active:scale-[0.98]
-            "
-          >
-            📞 Bebaslah Bertanya
-          </Link>
-        </div>
-      </main>
-    </>
+          📞 Bebaslah Bertanya
+        </Link>
+      </div>
+    </main>
   );
 }

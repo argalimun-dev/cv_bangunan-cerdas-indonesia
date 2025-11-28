@@ -1,2 +1,57 @@
-import MemoryListPage from './_MemoryListPage'
-export default MemoryListPage
+import type { Metadata } from "next";
+import { supabaseServer } from "@/lib/supabaseServer";
+import MemoryListPage from "./_MemoryListPage";
+
+export const revalidate = 60; // ISR 1 menit
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { data, error } = await supabaseServer
+    .from("memories")
+    .select("og_file_name")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  const ogImage =
+    data?.og_file_name && data.og_file_name.startsWith("http")
+      ? data.og_file_name
+      : "/images/og-memorylist.png";
+
+  return {
+    title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+    description:
+      "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
+
+    openGraph: {
+      title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+      description:
+        "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan.",
+      type: "website",
+      url: "https://cv-bangunan-cerdas-indonesia.vercel.app/memory",
+      images: [
+        {
+          url: ogImage,
+          width: 600,
+          height: 315,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+      description:
+        "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan.",
+      images: [ogImage],
+    },
+  };
+}
+
+export default async function Page() {
+  const { data: memories } = await supabaseServer
+    .from("memories")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  return <MemoryListPage memories={memories || []} />;
+}
