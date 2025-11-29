@@ -107,7 +107,7 @@ export default function MemoryDetailPage({ id }: MemoryDetailPageProps) {
   };
 
   if (loading)
-    return <p className="text-gray-200 p-6 max-w-3xl mx-auto">Loading...</p>;
+    return <p className="text-gray-200 p-6 max-w-3xl mx-auto">Memuat Detail Project...</p>;
 
   if (!memory)
     return (
@@ -118,7 +118,7 @@ export default function MemoryDetailPage({ id }: MemoryDetailPageProps) {
 
   return (
     <>
-      <div className="w-full pt-2 pb-4 px-1 md:pt-8 md:pb-2 md:pr-0 md:pl-2 text-slate-100 grid grid-cols-1 md:grid-cols-[1.4fr_0.5fr] xl:grid-cols-[1.7fr_1fr] gap-y-4 gap-x-1 md:gap-y-8 md:gap-x-10 relative h-auto min-h-0">
+      <div className="w-full pt-2 pb-4 px-1 sm:pt-8 sm:pb-6 sm:px-1 md:pt-8 md:pb-8 md:pr-1 md:pl-2 text-slate-100 grid grid-cols-1 md:grid-cols-[1.4fr_0.5fr] xl:grid-cols-[1.7fr_1fr] gap-y-4 gap-x-1 md:gap-y-8 md:gap-x-10 relative h-auto min-h-0">
         {/* LEFT COLUMN */}
         <div className="pt-2 pb-2 pr-2 pl-2 md:pb-2">
           <LeftColumn

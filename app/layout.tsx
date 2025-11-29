@@ -97,7 +97,7 @@ export default function RootLayout({
         {/* ✅ Scroll hanya di BODY, bukan di div lain */}
         <Navbar />
 
-        <main className="pt-16 pb-10 px-0 sm:py-16 sm:px-2 md:py-16 md:px-2 lg:px-4">
+        <main className="pt-16 pb-10 px-0 sm:py-16 sm:px-0 md:py-16 md:px-0 lg:py-20 lg:px-0">
           {children}
         </main>
       </body>
