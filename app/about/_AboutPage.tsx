@@ -72,8 +72,8 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="min-h-screen pt-4 pb-10 px-2 sm:py-6 sm:px-6 md:py-10 md:px-6 scrollbar-custom">
-      <div className="max-w-3xl mx-auto space-y-10">
+    <main className="min-h-screen pt-4 pb-10 px-2 sm:py-6 sm:px-6 md:py-8 md:px-6 scrollbar-custom">
+      <div className="max-w-3xl mx-auto">
         {/* HERO LOGO FULL WIDTH */}
         <div className="flex justify-center mb-8 px-0">
           <Image
@@ -87,12 +87,12 @@ export default function AboutPage() {
         </div>
 
         {/* TITLE */}
-        <h1 className="text-3xl md:text-4xl font-bold text-center text-white tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-white tracking-tight mb-4">
           Tentang Kami
         </h1>
 
         {/* DESCRIPTION BLOCK */}
-        <section className="space-y-6 text-gray-300 leading-relaxed text-justify">
+        <section className="space-y-6 text-gray-300 leading-relaxed text-justify px-1 sm:px-4 md:px-6 mb-6">
           <p className="text-lg">
             <strong className="text-white">CV. Bangunan Cerdas Indonesia</strong>{" "}
             adalah konsultan dan kontraktor listrik berbasis{" "}
@@ -117,7 +117,7 @@ export default function AboutPage() {
         </section>
 
         {/* TEAM SECTION */}
-        <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 shadow-lg">
+        <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 shadow-lg mb-6">
           <h2 className="text-2xl font-semibold text-white mb-4">
             Tim Pengembang
           </h2>

@@ -132,6 +132,12 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
       setEditText("");
     };
 
+    const onCancelReply = () => {
+      setReplyToId(null);
+      setReplyText("");
+      setReplyName("");
+    };
+
     // ✅ Kirim reply
     const onSendReply = async (parentId: string, text: string, name?: string) => {
       if (!text.trim()) return;
@@ -215,6 +221,7 @@ const CommentSection = forwardRef<CommentSectionRef, Props>(
           replies={replies}
           deviceIdentity={deviceIdentity}
           onStartReply={onStartReply}
+          onCancelReply={onCancelReply}
           onSendReply={onSendReply}
           onStartEdit={onStartEdit}
           onUpdate={onUpdate}

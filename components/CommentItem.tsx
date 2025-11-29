@@ -9,6 +9,7 @@ interface Props {
   deviceIdentity?: string | null;
 
   onStartReply: (commentId: string) => void;
+  onCancelReply: () => void;
   onSendReply: (parentCommentId: string, text: string, name?: string) => void;
 
   onStartEdit: (c: CommentShape) => void;
@@ -34,6 +35,7 @@ export default function CommentItem({
   replies = [],
   deviceIdentity,
   onStartReply,
+  onCancelReply,
   onSendReply,
   onStartEdit,
   onUpdate,
@@ -68,6 +70,8 @@ export default function CommentItem({
         {isEditing ? (
           <>
             <textarea
+              id={`edit-comment-text-${comment.id}`}   // ✅ DITAMBAHKAN
+              name="editComment"                       // ✅ DITAMBAHKAN
               value={editText || ""}
               onChange={(e) => setEditText?.(e.target.value)}
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
@@ -136,7 +140,13 @@ export default function CommentItem({
       {/* ================= REPLY INPUT ================= */}
       {isReplying && (
         <div className="ml-4 sm:ml-6 flex flex-col gap-1">
+          <label htmlFor="reply-text" className="sr-only">
+            Balasan
+          </label>
           <textarea
+            id="reply-text"
+            name="reply"
+            autoComplete="off"   // ✅ DITAMBAHKAN
             value={replyText || ""}
             onChange={(e) => setReplyText?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
@@ -144,7 +154,13 @@ export default function CommentItem({
             rows={2}
           />
 
+          <label htmlFor="reply-name" className="sr-only">
+            Nama
+          </label>
           <input
+            id="reply-name"
+            name="replyName"
+            autoComplete="name"  // ✅ DITAMBAHKAN
             value={replyName || ""}
             onChange={(e) => setReplyName?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
@@ -153,10 +169,7 @@ export default function CommentItem({
 
           <div className="flex gap-2 mt-1 justify-end">
             <button
-              onClick={() => {
-                setReplyText?.("");
-                setReplyName?.("");
-              }}
+              onClick={onCancelReply}
               className="text-gray-300 hover:underline"
             >
               Batal
@@ -187,6 +200,8 @@ export default function CommentItem({
                 {isReplyEditing ? (
                   <>
                     <textarea
+                      id={`edit-reply-text-${r.id}`}   // ✅ DITAMBAHKAN
+                      name="editReply"                // ✅ DITAMBAHKAN
                       value={editText || ""}
                       onChange={(e) => setEditText?.(e.target.value)}
                       className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"

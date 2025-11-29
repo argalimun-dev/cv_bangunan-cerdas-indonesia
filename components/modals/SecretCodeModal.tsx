@@ -91,6 +91,8 @@ export default function SecretCodeModal({
         </p>
 
         <input
+          id="secret-code"
+          name="secretCode"
           type="password"
           placeholder="Kode rahasia"
           value={secretCode}

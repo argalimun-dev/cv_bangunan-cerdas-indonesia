@@ -124,54 +124,63 @@ export default function MemoryCreatePage() {
   }, [file, title, description, uploader, secretCode, router]);
 
   return (
-    <div className="w-full px-4 py-10 min-h-screen flex justify-center bg-gray-900/20 scrollbar-custom scroll-smooth">
-      <div className="max-w-3xl w-full flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-gray-200 mb-2">
+    <div className="w-full px-4 py-6 min-h-screen flex justify-center bg-gray-900/20 scrollbar-custom scroll-smooth">
+      <div className="max-w-3xl w-full flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold text-gray-200">
           Tambah Project Baru
         </h1>
 
         <form
           onSubmit={handlePreSubmit}
-          className="flex flex-col flex-1 gap-4 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-6 rounded-xl overflow-hidden"
+          className="flex flex-col flex-1 gap-2 border border-gray-800 bg-gray-900/40 backdrop-blur-sm p-4 rounded-xl overflow-hidden"
         >
           {/* Body scrollable */}
           <div className="flex-1 flex flex-col gap-4 overflow-y-auto scrollbar-custom">
             {/* Judul */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-gray-400">Judul Project</label>
+              <label htmlFor="title" className="text-sm text-gray-400">
+                Judul Project
+              </label>
               <input
+                id="title"
+                name="title"
                 type="text"
-                placeholder="Contoh: Kesetrum"
+                placeholder="Contoh: 'Kesetrum'"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:ring-inset outline-none"
               />
             </div>
 
             {/* Deskripsi */}
             <div className="flex flex-col gap-1 flex-1 min-h-[300px]">
-              <label className="text-sm text-gray-400">Deskripsi</label>
+              <label htmlFor="description" className="text-sm text-gray-400">
+                Deskripsi
+              </label>
               <textarea
+                id="description"
+                name="description"
                 ref={descRef}
-                placeholder="Tuliskan cerita singkat..."
+                placeholder="Tuliskan cerita tentang 'Kesetrum'..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={5}
-                className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none overflow-y-auto scrollbar-custom"
+                className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 focus:ring-inset outline-none overflow-y-auto scrollbar-custom"
               />
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="flex flex-col gap-4">
             {/* File */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-gray-400">Unggah Gambar</label>
+              <label htmlFor="file" className="text-sm text-gray-400">
+                Unggah Gambar
+              </label>
               <input
+                id="file"
+                name="file"
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
-                className="text-gray-300 file:bg-gray-800 file:border-0 
+                className="text-gray-300 file:bg-white-800 file:border-0 
                   file:px-4 file:py-2 file:rounded-lg file:cursor-pointer
                   hover:file:bg-gray-700 transition"
               />
@@ -179,13 +188,17 @@ export default function MemoryCreatePage() {
 
             {/* Uploader */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-gray-400">Nama Pengunggah</label>
+              <label htmlFor="uploader" className="text-sm text-gray-400">
+                Nama Pengunggah
+              </label>
               <input
+                id="uploader"
+                name="uploader"
                 type="text"
                 placeholder="Anda ingin disebut apa"
                 value={uploader}
                 onChange={(e) => setUploader(e.target.value)}
-                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="bg-gray-900 border border-gray-800 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:ring-inset outline-none"
               />
             </div>
 

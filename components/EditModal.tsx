@@ -92,16 +92,26 @@ export default function EditModal({
 
           {/* Body scrollable */}
           <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-custom scroll-smooth">
-            <label className="block text-sm text-gray-300">Judul</label>
+            {/* Judul */}
+            <label htmlFor="edit-title" className="block text-sm text-gray-300">
+              Judul
+            </label>
             <input
+              id="edit-title"
+              name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={loading}
               className="w-full p-2 rounded bg-gray-800 border border-gray-700 text-white disabled:opacity-50"
             />
 
-            <label className="block text-sm text-gray-300">Deskripsi</label>
+            {/* Deskripsi */}
+            <label htmlFor="edit-description" className="block text-sm text-gray-300">
+              Deskripsi
+            </label>
             <textarea
+              id="edit-description"
+              name="description"
               ref={descRef}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -109,8 +119,13 @@ export default function EditModal({
               className="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white resize-none min-h-[150px] md:min-h-[200px]"
             />
 
-            <label className="block text-sm text-gray-300">Pengunggah</label>
+            {/* Pengunggah */}
+            <label htmlFor="edit-uploader" className="block text-sm text-gray-300">
+              Pengunggah
+            </label>
             <input
+              id="edit-uploader"
+              name="uploader"
               value={uploader}
               onChange={(e) => setUploader(e.target.value)}
               disabled={loading}
@@ -120,7 +135,10 @@ export default function EditModal({
 
           {/* Footer + File input */}
           <div className="p-4 border-t border-gray-800 bg-gray-900 flex flex-col md:flex-row md:justify-between gap-3">
+            <label htmlFor="edit-file" className="sr-only">Unggah Gambar</label>
             <input
+              id="edit-file"
+              name="file"
               type="file"
               accept="image/*"
               disabled={loading}

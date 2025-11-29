@@ -10,6 +10,7 @@ interface Props {
   deviceIdentity?: string | null;
 
   onStartReply: (id: string) => void;
+  onCancelReply: () => void;
   onSendReply: (parentId: string, text: string, name?: string) => void;
 
   onStartEdit: (c: CommentShape) => void;
@@ -35,6 +36,7 @@ export default function CommentList({
   replies,
   deviceIdentity,
   onStartReply,
+  onCancelReply,
   onSendReply,
   onStartEdit,
   onUpdate,
@@ -66,6 +68,7 @@ export default function CommentList({
           replies={replies[c.id] || []}
           deviceIdentity={deviceIdentity}
           onStartReply={onStartReply}
+          onCancelReply={onCancelReply}
           onSendReply={onSendReply}
           onStartEdit={onStartEdit}
           onUpdate={onUpdate}
