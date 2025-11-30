@@ -12,7 +12,7 @@ This project includes a scalable backend, responsive UI, and full deployment pip
 
 * 📸 Upload projects (photo + description)
 * 🖼 Responsive gallery grid (auto-masonry)
-* 💬 Comment system per memory
+* 💬 Comment system per Project
 * 🔐 User authentication (Supabase Auth)
 * ☁ Supabase Storage for images
 * 🗄 Supabase Database (Projects + Comments tables)
@@ -33,14 +33,14 @@ This project includes a scalable backend, responsive UI, and full deployment pip
 
 ```
 /app
-  /memory
+  /project
     /[id]
       page.tsx        # Detail project + comments
   page.tsx            # Gallery
   layout.tsx
 /components
   CommentSection.tsx
-  MemoryCard.tsx
+  ProjectCard.tsx
 /lib
   supabaseClient.ts
 /public
@@ -117,7 +117,7 @@ create table projects (
 ```sql
 create table comments (
   id uuid primary key default gen_random_uuid(),
-  memory_id uuid references memories(id) on delete cascade,
+  Project_id uuid references memories(id) on delete cascade,
   user_id uuid references auth.users(id),
   text text,
   created_at timestamp default now()

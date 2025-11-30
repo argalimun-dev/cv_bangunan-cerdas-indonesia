@@ -87,7 +87,7 @@ export default function HomePage() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <Link
-          href="/memory"
+          href="/project"
           className="
             px-8 py-3 
             rounded-xl text-lg font-medium 

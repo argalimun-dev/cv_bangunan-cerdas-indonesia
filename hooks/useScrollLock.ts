@@ -1,3 +1,4 @@
+// hooks/useScrollLock.ts
 "use client";
 
 import { useEffect } from "react";

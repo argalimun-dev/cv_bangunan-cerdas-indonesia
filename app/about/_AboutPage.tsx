@@ -168,7 +168,7 @@ export default function AboutPage() {
         {/* BACK BUTTON */}
         <div className="text-center pt-2">
           <Link
-            href="/memory"
+            href="/project"
             className="inline-block px-6 py-3 text-white rounded-xl 
             bg-blue-600/80 hover:bg-blue-600 transition-all duration-200 
             shadow-md text-base tracking-tight"

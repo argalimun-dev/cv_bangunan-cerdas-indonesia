@@ -19,5 +19,6 @@ export interface CommentShape {
   // relasi parent
   parent_id?: string | null;
 
-  [key: string]: any; // tetap fleksibel
+  // field tambahan dari Supabase jika ada
+  [key: string]: unknown;  // ✅ lebih aman daripada any
 }

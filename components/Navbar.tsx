@@ -72,7 +72,7 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-4">
           <Link
-            href="/memory/new"
+            href="/project/new"
             className="px-4 py-2 rounded-xl text-gray-900 bg-sky-400 
               hover:bg-sky-300 transition-all font-medium shadow-sm"
           >
@@ -101,7 +101,7 @@ export default function Navbar() {
       >
         <div className="px-6 flex flex-col space-y-3">
           <Link
-            href="/memory/new"
+            href="/project/new"
             onClick={() => setMenuOpen(false)}
             className="text-gray-900 bg-sky-400 px-4 py-2 rounded-xl text-center 
               hover:bg-sky-300 transition-all font-medium shadow-sm"
