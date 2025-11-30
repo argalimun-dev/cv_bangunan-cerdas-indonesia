@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import SecretCodeModal from "@/components/Modals/SecretCodeModal";
+import SecretCodeModal from "@/components/modals/SecretCodeModal";
 
 interface Props {
   isOpen: boolean;
