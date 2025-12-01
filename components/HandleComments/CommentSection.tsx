@@ -2,7 +2,7 @@
 
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from "react";
 import CommentList from "./CommentList";
-import CommentModal from "../Modals/CommentModal";
+import CommentModal from "../modals/CommentModal";
 import { supabase } from "@/lib/supabaseClient";
 import type { CommentShape } from "@/types/comment";
 

@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import SecretCodeModal from "@/components/Modals/SecretCodeModal";
+import SecretCodeModal from "@/components/modals/SecretCodeModal";
 
 export default function ProjectCreatePage() {
   const router = useRouter();
