@@ -53,8 +53,8 @@ export default function HomePage() {
     <main
       className="
         flex flex-col items-center justify-center 
-        min-h-[80vh] w-full 
-        px-6 text-center 
+        h-[100svh] w-full 
+        px-6 text-center overflow-hidden
         animate-fadeIn
       "
     >
