@@ -7,8 +7,8 @@ import LeftColumn from "@/components/ProjectDetail/LeftColumn";
 import RightColumn from "@/components/ProjectDetail/RightColumn";
 import CommentSection, { CommentSectionRef } from "@/components/HandleComments/CommentSection";
 import FullscreenViewer from "@/components/FullscreenViewer";
-import DeleteModal from "@/components/modals/DeleteModal";
-import EditModal from "@/components/modals/EditModal";
+import DeleteModal from "@/components/Modals/DeleteModal";
+import EditModal from "@/components/Modals/EditModal";
 
 import useProjectDetail from "@/hooks/useProjectDetail";
 import useDeviceIdentity from "@/hooks/useDeviceIdentity";

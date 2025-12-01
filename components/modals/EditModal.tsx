@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import EditItem from "../EditItem";
-import SecretCodeModal from "@/components/modals/SecretCodeModal";
+import SecretCodeModal from "@/components/Modals/SecretCodeModal";
 
 interface Props {
   isOpen: boolean;
