@@ -102,7 +102,7 @@ export default function AboutPage() {
               Galeri Pemasaran Digital Interaktif
             </strong>{" "}
             untuk menampilkan, menyimpan dan mendokumentasikan berbagai{" "}
-            <em>Project</em> terkait Smart Building.
+            Project terkait <em>Smart Building</em>.
           </p>
 
           <p className="text-lg">

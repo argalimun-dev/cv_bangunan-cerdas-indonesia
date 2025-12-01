@@ -6,39 +6,35 @@
       "DOM.Iterable",
       "ESNext"
     ],
-
     "allowJs": false,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-
-    "jsx": "preserve",
-
-    // ✅ PENTING: Tambahkan node typings
+    "jsx": "preserve", // ✅ fix utama
+    "jsxImportSource": "react", // ✅ fix utama
     "types": [
       "node",
       "@vercel/og"
     ],
-
     "incremental": true,
-
     "plugins": [
-      { "name": "next" }
+      {
+        "name": "next"
+      }
     ],
-
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -46,6 +42,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-
-  "exclude": ["node_modules", ".next"]
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
 }

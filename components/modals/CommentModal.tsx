@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import CommentMainItem from "../HandleComments/CommentFormMain";
+import CommentFormMain from "../HandleComments/CommentFormMain";
 
 interface Props {
   open: boolean;
@@ -49,7 +49,7 @@ export default function CommentModal({
         role="dialog"
         aria-modal="true"
       >
-        <CommentMainItem
+        <CommentFormMain
           open={open}
           defaultName={defaultName}
           text={text}

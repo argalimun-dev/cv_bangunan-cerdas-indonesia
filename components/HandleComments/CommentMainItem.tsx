@@ -63,6 +63,8 @@ export default function CommentMainItem({
         {isEditing ? (
           <>
             <textarea
+              id={`edit-comment-${comment.id}`}
+              name="editComment"
               value={editText || ""}
               onChange={(e) => setEditText?.(e.target.value)}
               className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
@@ -132,6 +134,8 @@ export default function CommentMainItem({
       {isReplying && (
         <div className="ml-4 sm:ml-6 flex flex-col gap-1">
           <textarea
+            id={`reply-text-${comment.id}`}
+            name="replyText"
             value={replyText || ""}
             onChange={(e) => setReplyText?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
@@ -140,6 +144,8 @@ export default function CommentMainItem({
           />
 
           <input
+            id={`reply-name-${comment.id}`}
+            name="replyName"
             value={replyName || ""}
             onChange={(e) => setReplyName?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"

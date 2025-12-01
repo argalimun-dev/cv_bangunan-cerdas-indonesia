@@ -9,9 +9,9 @@ export const runtime = "nodejs"; // wajib untuk sharp + fs
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { memoryId: string } }
+  { params }: { params: Promise<{ memoryId: string }> } // ✅ FIX TYPE
 ) {
-  const { memoryId } = params;
+  const { memoryId } = await params; // ✅ WAJIB await
 
   let finalBuffer: Buffer | null = null;
 
@@ -89,7 +89,7 @@ export async function GET(
   return new NextResponse(new Uint8Array(finalBuffer), {
     status: 200,
     headers: {
-      "Content-Type": "image/webp",
+      "Content-Type": "image/webp", // ✅ tetap webp sesuai desain kamu
       "Cache-Control": "public, max-age=31536000, immutable",
     },
   });

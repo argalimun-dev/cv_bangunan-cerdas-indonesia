@@ -60,34 +60,57 @@ export default function RightColumn({
         </div>
 
         {/* Metadata & tombol */}
-        <div className="w-full flex flex-wrap justify-end gap-3 text-sm text-gray-300 items-center mb-3">
-          <div className="flex items-center gap-2">
-            <span>🗓️</span>
-            <span>
-              {new Date(memory.created_at).toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
+        <div className="w-full flex flex-col items-end gap-1 text-sm text-gray-300 mb-3">
+
+          {/* Baris 1: Date | Uploader */}
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex items-center gap-2">
+              <span>🗓️</span>
+              <span>
+                {new Date(memory.created_at).toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+
+            <span className="opacity-50">|</span>
+
+            <div className="flex items-center gap-2">
+              <span>👤</span>
+              <span className="font-medium">{memory.uploader || "Anonim"}</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span>👤</span>
-            <span className="font-medium">{memory.uploader || "Anonim"}</span>
+          {/* Baris 2: Komentar | Sunting | Hapus */}
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <button
+              onClick={() => commentRef.current?.openModal()}
+              className="hover:underline"
+            >
+              Komentar
+            </button>
+
+            <span className="opacity-50">|</span>
+
+            <button
+              onClick={onEdit}
+              className="hover:underline text-sky-300"
+            >
+              Sunting
+            </button>
+
+            <span className="opacity-50">|</span>
+
+            <button
+              onClick={onDelete}
+              className="hover:underline text-red-400"
+            >
+              Hapus
+            </button>
           </div>
 
-          <button onClick={() => commentRef.current?.openModal()} className="hover:underline">
-            Komentar
-          </button>
-
-          <button onClick={onEdit} className="hover:underline text-sky-300">
-            Sunting
-          </button>
-
-          <button onClick={onDelete} className="hover:underline text-red-400">
-            Hapus
-          </button>
         </div>
 
         {/* Comment Section */}

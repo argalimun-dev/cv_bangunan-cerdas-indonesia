@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/og-home.png",
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/og-home`,
         width: 1200,
         height: 630,
         alt: "Smart Project Wall - CV. Bangunan Cerdas Indonesia",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
     description:
       "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
-    images: ["/images/og-home.png"],
+    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/api/og-home`],
   },
 
   robots: {

@@ -36,16 +36,16 @@ export default function Navbar() {
         ${isVisible ? "translate-y-0" : "-translate-y-full"}
       `}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-1 sm:py-4 flex items-center justify-between">
 
         {/* Logo + Text */}
         <div className="flex items-center gap-3 sm:gap-4">
           <Link href="/" className="flex-shrink-0">
             <Image
-              src="/logo.png"
-              alt="Logo CV. Bangunan Cerdas Indonesia"
-              width={120}
-              height={40}
+              src="/icon.png"
+              alt="Icon CV. Bangunan Cerdas Indonesia"
+              width={50}
+              height={50}
               className="h-auto w-auto max-w-[60px] sm:w-[80px] md:w-[120px] transition-all"
             />
           </Link>

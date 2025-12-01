@@ -38,6 +38,8 @@ export default function CommentReplyItem({
       {isEditing ? (
         <>
           <textarea
+            id={`edit-reply-${reply.id}`}
+            name="editReply"
             value={editText || ""}
             onChange={(e) => setEditText?.(e.target.value)}
             className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 resize-none"
