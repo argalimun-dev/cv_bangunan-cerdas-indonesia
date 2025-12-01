@@ -1,3 +1,4 @@
+// lib/generateOgImage.ts
 import sharp from "sharp";
 import { supabaseServer } from "@/lib/supabaseServer";
 

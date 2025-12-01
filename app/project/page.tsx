@@ -1,3 +1,4 @@
+// app/project/page.tsx
 import type { Metadata } from "next";
 import { supabaseServer } from "@/lib/supabaseServer";
 import ProjectListPage from "./_ProjectListPage";

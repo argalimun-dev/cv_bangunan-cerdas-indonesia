@@ -1,3 +1,4 @@
+// app/project/[id]/_ProjectDetailPage.tsx
 "use client";
 
 import { useState, useRef } from "react";

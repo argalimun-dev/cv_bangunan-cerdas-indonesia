@@ -1,3 +1,4 @@
+// components/ProjectDetail/RightColumn.tsx
 "use client";
 
 import React from "react";

@@ -1,4 +1,4 @@
-// src/types/comment.ts
+// types/comment.ts
 export interface CommentShape {
   id: string;
   text: string;

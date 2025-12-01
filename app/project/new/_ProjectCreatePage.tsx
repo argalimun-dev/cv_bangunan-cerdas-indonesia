@@ -1,3 +1,4 @@
+// app/project/new/_ProjectCreatePage.tsx
 "use client";
 
 import { useState, FormEvent, useCallback, useRef, useEffect } from "react";
@@ -80,33 +81,24 @@ export default function ProjectCreatePage() {
     try {
       if (!file) throw new Error("File hilang");
 
-      // Convert file → base64
-      const arrayBuffer = await file.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let binary = "";
-      const chunkSize = 0x8000;
-
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-      }
-
-      const fileBase64 = btoa(binary);
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("uploader", uploader);
+      formData.append("secretCode", secretCode);
+      formData.append("file", file); // ✅ FILE ASLI, BUKAN BASE64
 
       const res = await fetch("/api/projectServer/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          description,
-          uploader,
-          secretCode,
-          fileBase64,
-          fileName: file.name,
-          fileType: file.type,
-        }),
+        body: formData, // ✅ multipart/form-data otomatis
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
 
       if (!res.ok) {
         setErrorMsg(data?.error || "Gagal membuat Project");

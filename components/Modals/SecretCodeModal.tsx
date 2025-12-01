@@ -1,3 +1,4 @@
+// components/Modals/SecretCodeModal.tsx
 "use client";
 
 import React from "react";

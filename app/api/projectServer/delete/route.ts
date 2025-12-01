@@ -1,3 +1,4 @@
+// app/api/projectServer/delete/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
 

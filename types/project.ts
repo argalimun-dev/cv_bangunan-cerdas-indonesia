@@ -1,4 +1,4 @@
-// src/types/project.ts
+// types/project.ts
 export interface ProjectShape {
   id: string;
   title?: string;
