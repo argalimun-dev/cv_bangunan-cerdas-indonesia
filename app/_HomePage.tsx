@@ -52,9 +52,9 @@ export default function HomePage() {
   return (
     <main
       className="
-        flex flex-col items-center justify-center 
-        h-[100svh] w-full 
-        px-6 text-center overflow-hidden
+        flex flex-col items-center justify-center
+        min-h-[80dvh] w-full
+        px-6 text-center
         animate-fadeIn
       "
     >
@@ -74,7 +74,7 @@ export default function HomePage() {
       <p
         className="
           text-gray-400 text-base sm:text-lg 
-          max-w-2xl mt-6 mb-10 leading-relaxed
+          max-w-2xl mt-6 mb-6 leading-relaxed
         "
       >
         Platform Galeri Pemasaran Digital Interaktif <br />
