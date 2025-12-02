@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { FormWrapper } from "@/components/FormWrapper";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/Button";
+import { processImageFile } from "@/services/imageProcessor";
 
 interface Props {
   isOpen: boolean;
@@ -54,50 +55,29 @@ export default function EditItem({
     let selected = e.target.files?.[0] ?? null;
     if (!selected) return;
 
-    // ✅ SIZE CHECK
+    // ✅ SIZE CHECK AWAL
     if (selected.size > 10 * 1024 * 1024) {
       alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
       return;
     }
 
-    const isHeic =
-      selected.type === "image/heic" ||
-      selected.type === "image/heif" ||
-      selected.name.toLowerCase().endsWith(".heic");
+    setIsConverting(true);
 
-    // ✅ CONVERT HEIC → JPEG DI CLIENT
-    if (isHeic) {
-      setIsConverting(true);
-      try {
-        const heic2any = (await import("heic2any")).default;
+    try {
+      const processedFile = await processImageFile(selected);
 
-        const convertedBlob = (await heic2any({
-          blob: selected,
-          toType: "image/jpeg",
-          quality: 0.95,
-        })) as Blob;
-
-        selected = new File(
-          [convertedBlob],
-          selected.name.replace(/\.heic/i, ".jpg"),
-          { type: "image/jpeg" }
-        );
-      } catch (err) {
-        console.error("HEIC convert failed:", err);
-        alert("❌ Gagal mengonversi foto HEIC.");
+      if (!processedFile.type.startsWith("image/")) {
+        alert("❌ File harus berupa gambar.");
         return;
-      } finally {
-        setIsConverting(false);
       }
-    }
 
-    // ✅ VALIDASI AKHIR
-    if (!selected.type.startsWith("image/")) {
-      alert("❌ File harus berupa gambar (JPG, PNG, HEIC).");
-      return;
+      setFile(processedFile);
+    } catch (err) {
+      console.error("Image process failed:", err);
+      alert("❌ Gagal memproses gambar.");
+    } finally {
+      setIsConverting(false);
     }
-
-    setFile(selected);
   };
 
   return (
