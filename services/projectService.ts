@@ -10,21 +10,6 @@ export interface UpdateMemoryParams {
 }
 
 // ================================
-// UTIL: Safe ArrayBuffer → Base64
-// ================================
-function arrayBufferToBase64(buffer: ArrayBuffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const chunkSize = 0x8000;
-
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-
-  return btoa(binary);
-}
-
-// ================================
 // DELETE MEMORY (client-safe)
 // ================================
 export async function deleteMemory(memoryId: string, secretCode: string) {
@@ -46,7 +31,7 @@ export async function deleteMemory(memoryId: string, secretCode: string) {
 }
 
 // ================================
-// UPDATE MEMORY (client-safe, final realtime)
+// UPDATE MEMORY (client-safe, FormData)
 // ================================
 export async function updateMemory({
   id,
@@ -59,36 +44,19 @@ export async function updateMemory({
   if (!id) throw new Error("Project ID invalid");
   if (!uploader?.trim()) throw new Error("Uploader wajib diisi");
 
-  let fileBase64: string | undefined;
-  let fileName: string | undefined;
-  let fileType: string | undefined;
+  // ✅ Gunakan FormData
+  const formData = new FormData();
+  formData.append("id", id);
+  formData.append("uploader", uploader);
 
-  if (file) {
-    const arrayBuffer = await file.arrayBuffer();
-    fileBase64 = arrayBufferToBase64(arrayBuffer);
-    fileName = file.name;
-    fileType = file.type;
-  }
-
-  // ✅ PAYLOAD AMAN: hanya kirim field yang ada
-  const payload: { [key: string]: any } = {
-    id,
-    uploader,
-  };
-
-  if (secretCode?.trim()) payload.secretCode = secretCode; // ✅ kirim secretCode hanya kalau ada
-  if (title !== undefined) payload.title = title;
-  if (description !== undefined) payload.description = description;
-  if (fileBase64 && fileName && fileType) {
-    payload.fileBase64 = fileBase64;
-    payload.fileName = fileName;
-    payload.fileType = fileType;
-  }
+  if (title !== undefined) formData.append("title", title);
+  if (description !== undefined) formData.append("description", description);
+  if (secretCode?.trim()) formData.append("secretCode", secretCode);
+  if (file) formData.append("file", file); // File asli, bisa HEIC yang sudah dikonversi di Client
 
   const res = await fetch("/api/projectServer/update", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: formData, // ✅ multipart/form-data otomatis
   });
 
   if (!res.ok) {

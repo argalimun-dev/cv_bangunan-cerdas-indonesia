@@ -8,6 +8,8 @@ import SecretCodeModal from "@/components/Modals/SecretCodeModal";
 export default function ProjectCreatePage() {
   const router = useRouter();
 
+  const [isConverting, setIsConverting] = useState(false);
+
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -30,19 +32,55 @@ export default function ProjectCreatePage() {
   }, [description]);
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selected = e.target.files?.[0] || null;
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      let selected = e.target.files?.[0] || null;
+      if (!selected) return;
 
-      if (selected) {
-        if (selected.size > 10 * 1024 * 1024) {
-          alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
-          return;
-        }
+      // ✅ SIZE CHECK
+      if (selected.size > 10 * 1024 * 1024) {
+        alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
+        return;
+      }
 
-        if (!selected.type.startsWith("image/")) {
-          alert("❌ File harus berupa gambar!");
+      const isHeic =
+        selected.type === "image/heic" ||
+        selected.type === "image/heif" ||
+        selected.name.toLowerCase().endsWith(".heic");
+
+      // ✅ JIKA HEIC → CONVERT KE JPEG DI BROWSER
+      if (isHeic) {
+        setIsConverting(true);
+        try {
+          // 🔹 DYNAMIC IMPORT HANYA DI CLIENT
+          const heic2any = (await import("heic2any")).default;
+
+          const convertedBlob = (await heic2any({
+            blob: selected,
+            toType: "image/jpeg",
+            quality: 0.95,
+          })) as Blob;
+
+          const jpegFile = new File(
+            [convertedBlob],
+            selected.name.replace(/\.heic/i, ".jpg"),
+            { type: "image/jpeg" }
+          );
+
+          selected = jpegFile;
+        } catch (err) {
+          console.error("HEIC convert failed:", err);
+          alert("❌ Gagal mengonversi foto HEIC.");
           return;
+        } finally {
+          // ✅ finally harus ada di dalam try-catch
+          setIsConverting(false);
         }
+      }
+
+      // ✅ VALIDASI AKHIR (SETELAH KONVERSI)
+      if (!selected.type.startsWith("image/")) {
+        alert("❌ File harus berupa gambar (JPG, PNG, HEIC).");
+        return;
       }
 
       setFile(selected);
@@ -50,21 +88,21 @@ export default function ProjectCreatePage() {
     []
   );
 
-  // -------------------------------
-  // VALIDASI AWAL → BUKA MODAL
-  // -------------------------------
-  const handlePreSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+    // -------------------------------
+    // VALIDASI AWAL → BUKA MODAL
+    // -------------------------------
+    const handlePreSubmit = useCallback(
+      (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-      if (!file) return alert("📸 Pilih gambar dulu!");
-      if (!title.trim()) return alert("✏️ Isi judul dulu!");
-      if (!uploader.trim()) return alert("👤 Isi nama pengunggah dulu!");
+        if (!file) return alert("📸 Pilih gambar dulu!");
+        if (!title.trim()) return alert("✏️ Isi judul dulu!");
+        if (!uploader.trim()) return alert("👤 Isi nama pengunggah dulu!");
 
-      setIsSecretModalOpen(true);
-    },
-    [file, title, uploader]
-  );
+        setIsSecretModalOpen(true);
+      },
+      [file, title, uploader]
+    );
 
   // -------------------------------
   // SUBMIT SEBENARNYA (SETELAH SECRET CODE)
@@ -179,7 +217,7 @@ export default function ProjectCreatePage() {
                   id="file"
                   name="file"
                   type="file"
-                  accept="image/*"
+                  accept="image/*,.heif,.HEIC"
                   onChange={handleFileChange}
                   className="w-full text-gray-300 bg-transparent
                   file:bg-white-800 file:border-0
@@ -208,7 +246,7 @@ export default function ProjectCreatePage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || isConverting} // ⬅️ tambahkan isConverting
               className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-medium
               border border-blue-600
               focus:border-blue-300 focus:outline-none

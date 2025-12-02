@@ -1,7 +1,7 @@
 // components/EditItem.tsx
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { FormWrapper } from "@/components/FormWrapper";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/Button";
@@ -38,6 +38,7 @@ export default function EditItem({
   loading,
 }: Props) {
   const descRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
 
   useEffect(() => {
     if (!descRef.current) return;
@@ -47,6 +48,57 @@ export default function EditItem({
   }, [description]);
 
   if (!isOpen) return null;
+
+  // 2️⃣ Buat handler file change async
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let selected = e.target.files?.[0] ?? null;
+    if (!selected) return;
+
+    // ✅ SIZE CHECK
+    if (selected.size > 10 * 1024 * 1024) {
+      alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
+      return;
+    }
+
+    const isHeic =
+      selected.type === "image/heic" ||
+      selected.type === "image/heif" ||
+      selected.name.toLowerCase().endsWith(".heic");
+
+    // ✅ CONVERT HEIC → JPEG DI CLIENT
+    if (isHeic) {
+      setIsConverting(true);
+      try {
+        const heic2any = (await import("heic2any")).default;
+
+        const convertedBlob = (await heic2any({
+          blob: selected,
+          toType: "image/jpeg",
+          quality: 0.95,
+        })) as Blob;
+
+        selected = new File(
+          [convertedBlob],
+          selected.name.replace(/\.heic/i, ".jpg"),
+          { type: "image/jpeg" }
+        );
+      } catch (err) {
+        console.error("HEIC convert failed:", err);
+        alert("❌ Gagal mengonversi foto HEIC.");
+        return;
+      } finally {
+        setIsConverting(false);
+      }
+    }
+
+    // ✅ VALIDASI AKHIR
+    if (!selected.type.startsWith("image/")) {
+      alert("❌ File harus berupa gambar (JPG, PNG, HEIC).");
+      return;
+    }
+
+    setFile(selected);
+  };
 
   return (
     <div
@@ -114,11 +166,9 @@ export default function EditItem({
                   id="edit-file"
                   name="file"
                   type="file"
-                  accept="image/*"
-                  disabled={loading}
-                  onChange={(e) =>
-                    setFile(e.target.files?.[0] ?? null)
-                  }
+                  accept="image/*,.heif,.HEIC"
+                  disabled={loading || isConverting} // ✅ disable saat converting
+                  onChange={handleFileChange}        // ✅ pakai handler baru
                   className="w-full text-sm bg-transparent file:border-0 file:px-1 file:py-1 file:rounded-md file:cursor-pointer"
                 />
               </div>
