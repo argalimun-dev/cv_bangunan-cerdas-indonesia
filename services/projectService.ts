@@ -31,7 +31,7 @@ export async function deleteMemory(memoryId: string, secretCode: string) {
 }
 
 // ================================
-// UPDATE MEMORY (client-safe, FormData)
+// UPDATE MEMORY (client-safe, FormData + ERROR INDICATOR)
 // ================================
 export async function updateMemory({
   id,
@@ -41,10 +41,14 @@ export async function updateMemory({
   file,
   secretCode,
 }: UpdateMemoryParams) {
-  if (!id) throw new Error("Project ID invalid");
-  if (!uploader?.trim()) throw new Error("Uploader wajib diisi");
+  if (!id) {
+    return { ok: false, error: "Project ID invalid" };
+  }
 
-  // ✅ Gunakan FormData
+  if (!uploader?.trim()) {
+    return { ok: false, error: "Uploader wajib diisi" };
+  }
+
   const formData = new FormData();
   formData.append("id", id);
   formData.append("uploader", uploader);
@@ -52,18 +56,31 @@ export async function updateMemory({
   if (title !== undefined) formData.append("title", title);
   if (description !== undefined) formData.append("description", description);
   if (secretCode?.trim()) formData.append("secretCode", secretCode);
-  if (file) formData.append("file", file); // File asli, bisa HEIC yang sudah dikonversi di Client
+  if (file) formData.append("file", file);
 
-  const res = await fetch("/api/projectServer/update", {
-    method: "POST",
-    body: formData, // ✅ multipart/form-data otomatis
-  });
+  try {
+    const res = await fetch("/api/projectServer/update", {
+      method: "POST",
+      body: formData,
+    });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err?.error || "Gagal memperbarui project!");
+    if (!res.ok) {
+      const text = await res.text();
+      return {
+        ok: false,
+        error: text || "Gagal memperbarui project",
+        status: res.status,
+      };
+    }
+
+    const json = await res.json();
+    return { ok: true, data: json.data };
+
+  } catch (err: any) {
+    console.warn("UPDATE MEMORY NETWORK ERROR:", err);
+    return {
+      ok: false,
+      error: "Koneksi internet terputus atau server tidak merespons",
+    };
   }
-
-  // ✅ RETURN DATA TERBARU untuk langsung update state di frontend
-  return await res.json(); // { ok: true, data: updatedMemory }
 }

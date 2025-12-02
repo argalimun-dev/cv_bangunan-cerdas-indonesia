@@ -5,7 +5,6 @@ import React, { useRef, useEffect, useState } from "react";
 import { FormWrapper } from "@/components/FormWrapper";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/Button";
-import { processImageFile } from "@/services/imageProcessor";
 
 interface Props {
   isOpen: boolean;
@@ -40,6 +39,8 @@ export default function EditItem({
 }: Props) {
   const descRef = useRef<HTMLTextAreaElement | null>(null);
   const [isConverting, setIsConverting] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
   useEffect(() => {
     if (!descRef.current) return;
@@ -55,28 +56,36 @@ export default function EditItem({
     let selected = e.target.files?.[0] ?? null;
     if (!selected) return;
 
-    // ✅ SIZE CHECK AWAL
-    if (selected.size > 10 * 1024 * 1024) {
-      alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
-      return;
-    }
-
-    setIsConverting(true);
+    setUploadError(null);
+    setIsProcessingImage(true);
 
     try {
-      const processedFile = await processImageFile(selected);
-
-      if (!processedFile.type.startsWith("image/")) {
-        alert("❌ File harus berupa gambar.");
-        return;
+      // ✅ HARD LIMIT RAW FILE (ANTI RAM MATI)
+      if (selected.size > 12 * 1024 * 1024) {
+        throw new Error("File mentah terlalu besar (>12MB)");
       }
 
-      setFile(processedFile);
-    } catch (err) {
-      console.error("Image process failed:", err);
-      alert("❌ Gagal memproses gambar.");
+      const { processImageFile } = await import("@/services/imageProcessor");
+      const processed = await processImageFile(selected);
+
+      setFile(processed);
+      console.log("FINAL FILE READY:", processed.name, processed.size);
+    } catch (err: any) {
+      console.error("UPLOAD IMAGE ERROR:", err);
+
+      // ✅ PESAN ERROR YANG JELAS KE USER
+      if (err?.name === "ImageProcessError") {
+        setUploadError(err.message);
+      } else if (err?.message?.includes("network")) {
+        setUploadError("Koneksi internet bermasalah saat upload.");
+      } else {
+        setUploadError("Terjadi error tak terduga saat memproses gambar.");
+      }
+
+      setFile(null);
     } finally {
-      setIsConverting(false);
+      setIsProcessingImage(false);
+      e.target.value = ""; // ✅ reset input supaya bisa pilih ulang file sama
     }
   };
 
@@ -151,6 +160,22 @@ export default function EditItem({
                   onChange={handleFileChange}        // ✅ pakai handler baru
                   className="w-full text-sm bg-transparent file:border-0 file:px-1 file:py-1 file:rounded-md file:cursor-pointer"
                 />
+                {isProcessingImage && (
+                  <p className="text-xs text-yellow-400 mt-1">
+                    Memproses gambar...
+                  </p>
+                )}
+                {file && !isProcessingImage && (
+                  <p className="text-xs text-emerald-400 mt-1 break-all">
+                    ✅ File siap: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                )}
+
+                {uploadError && (
+                  <p className="text-xs text-red-400 mt-1">
+                    {uploadError}
+                  </p>
+                )}
               </div>
             </FormField>
           </div>

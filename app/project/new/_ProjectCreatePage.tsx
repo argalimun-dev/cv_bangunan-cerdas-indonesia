@@ -4,14 +4,13 @@
 import { useState, FormEvent, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SecretCodeModal from "@/components/Modals/SecretCodeModal";
-import { processImageFile } from "@/services/imageProcessor";
 
 export default function ProjectCreatePage() {
   const router = useRouter();
 
-  const [isConverting, setIsConverting] = useState(false);
-
   const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [uploader, setUploader] = useState("");
@@ -23,6 +22,9 @@ export default function ProjectCreatePage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const descRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
   // Auto-grow textarea
   useEffect(() => {
@@ -32,37 +34,45 @@ export default function ProjectCreatePage() {
     ta.style.height = ta.scrollHeight + "px";
   }, [description]);
 
-  const handleFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      let selected = e.target.files?.[0] || null;
-      if (!selected) return;
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let selected = e.target.files?.[0] ?? null;
+    if (!selected) return;
 
-      // ✅ SIZE CHECK AWAL
-      if (selected.size > 10 * 1024 * 1024) {
-        alert("⚠️ Ukuran file terlalu besar! Maksimal 10MB.");
-        return;
+    setUploadError(null);
+    setIsProcessingImage(true);
+    setFile(null);
+    setFileName(selected.name);
+
+    try {
+      // ✅ HARD LIMIT RAW FILE (ANTI RAM MATI)
+      if (selected.size > 12 * 1024 * 1024) {
+        throw new Error("File mentah terlalu besar (>12MB)");
       }
 
-      setIsConverting(true);
+      const { processImageFile } = await import("@/services/imageProcessor");
+      const processed = await processImageFile(selected);
 
-      try {
-        const processedFile = await processImageFile(selected);
+      setFile(processed);
+      setFileName(processed.name);
+    } catch (err: any) {
+      console.error("UPLOAD IMAGE ERROR:", err);
 
-        if (!processedFile.type.startsWith("image/")) {
-          alert("❌ File harus berupa gambar.");
-          return;
-        }
-
-        setFile(processedFile);
-      } catch (err) {
-        console.error("Image process failed:", err);
-        alert("❌ Gagal memproses gambar.");
-      } finally {
-        setIsConverting(false);
+      // ✅ PESAN ERROR YANG JELAS KE USER
+      if (err?.name === "ImageProcessError") {
+        setUploadError(err.message);
+      } else if (err?.message?.includes("network")) {
+        setUploadError("Koneksi internet bermasalah saat upload.");
+      } else {
+        setUploadError("Terjadi error tak terduga saat memproses gambar.");
       }
-    },
-    []
-  );
+
+      setFile(null);
+      setFileName(null);
+    } finally {
+      setIsProcessingImage(false);
+      e.target.value = ""; // ✅ reset input supaya bisa pilih ulang file sama
+    }
+  };
 
     // -------------------------------
     // VALIDASI AWAL → BUKA MODAL
@@ -89,22 +99,25 @@ export default function ProjectCreatePage() {
       return;
     }
 
+    if (!file) {
+      setErrorMsg("File gambar tidak ditemukan!");
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
 
     try {
-      if (!file) throw new Error("File hilang");
-
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
       formData.append("uploader", uploader);
       formData.append("secretCode", secretCode);
-      formData.append("file", file); // ✅ FILE ASLI, BUKAN BASE64
+      formData.append("file", file);
 
       const res = await fetch("/api/projectServer/create", {
         method: "POST",
-        body: formData, // ✅ multipart/form-data otomatis
+        body: formData,
       });
 
       let data: any = {};
@@ -114,24 +127,31 @@ export default function ProjectCreatePage() {
         data = {};
       }
 
+      // ✅ SERVER ERROR (bukan network)
       if (!res.ok) {
-        setErrorMsg(data?.error || "Gagal membuat Project");
-        return; // ⬅️ hentikan eksekusi tanpa throw
+        setErrorMsg(data?.error || "Gagal membuat Project (server error)");
+        return;
       }
 
-      // ✅ SUKSES → baru tutup modal
+      // ✅ SUKSES
       alert("✅ Berhasil menambahkan Project 🎉");
       setIsSecretModalOpen(false);
       setSecretCode("");
       router.push("/project");
       router.refresh();
-    } catch (err: any) {
-      console.error("NETWORK ERROR:", err);
-      setErrorMsg("Terjadi kesalahan jaringan");
 
-      // ✅ Modal tetap terbuka agar user bisa retry
+    } catch (err: any) {
+      // ✅ NETWORK / FETCH ERROR
+      console.error("NETWORK / FETCH ERROR:", err);
+
+      if (err?.name === "TypeError") {
+        setErrorMsg("Koneksi internet terputus atau server tidak merespons.");
+      } else {
+        setErrorMsg("Terjadi kesalahan jaringan saat upload.");
+      }
+
     } finally {
-      setLoading(false); // ✅ loading selalu dimatikan
+      setLoading(false);
     }
   }, [file, title, description, uploader, secretCode, router]);
 
@@ -195,13 +215,35 @@ export default function ProjectCreatePage() {
                   type="file"
                   accept="image/*,.heif,.HEIC"
                   onChange={handleFileChange}
+                  disabled={isProcessingImage}
                   className="w-full text-gray-300 bg-transparent
                   file:bg-white-800 file:border-0
                   file:px-4 file:py-2 file:rounded-md file:cursor-pointer
                   hover:file:bg-gray-700 transition outline-none"
                 />
+
+                {/* ✅ STATUS PROCESSING */}
+                  {isProcessingImage && (
+                    <p className="text-xs text-yellow-400 mt-1 animate-pulse">
+                      Memproses gambar...
+                    </p>
+                  )}
+
+                  {/* ✅ NAMA FILE TERPILIH */}
+                  {!isProcessingImage && fileName && (
+                    <p className="text-xs text-green-400 mt-1 truncate">
+                      ✅ {fileName}
+                    </p>
+                  )}
+
+                  {/* ✅ ERROR UPLOAD */}
+                  {uploadError && (
+                    <p className="text-xs text-red-400 mt-1">
+                      {uploadError}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
 
             {/* Uploader */}
             <div className="flex flex-col gap-1">

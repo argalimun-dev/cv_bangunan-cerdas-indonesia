@@ -77,35 +77,36 @@ export default function ProjectDetailPage({ id }: ProjectDetailPageProps) {
   // ----------------------
   // UPDATE MEMORY (FINAL REALTIME) dengan Secret Code
   // ----------------------
-  const handleUpdateMemory = async (secretCode: string) => {
-    if (!memory) return;
+ const handleUpdateMemory = async (secretCode: string) => {
+  if (!memory) return;
 
-    if (!secretCode.trim()) {
-      alert("Masukkan kode rahasia!");
-      return;
-    }
+  if (!secretCode.trim()) {
+    alert("Masukkan kode rahasia!");
+    return;
+  }
 
-    try {
-      setEditLoading(true);
-      const updated = await updateMemory({
-        id: memory.id,
-        title: editTitle,
-        description: editDescription,
-        uploader: editUploader,
-        file: editImageFile,
-        secretCode, // ✅ kirim secret code ke service
-      });
+  setEditLoading(true);
 
-      alert("Berhasil disimpan!");
-      updateMemoryState(updated.data);
-      setShowEditModal(false);
-    } catch (err: any) {
-      alert(`Gagal menyimpan perubahan: ${err.message || ""}`);
-    } finally {
-      setEditLoading(false);
-      setEditImageFile(null);
-    }
-  };
+  const result = await updateMemory({
+    id: memory.id,
+    title: editTitle,
+    description: editDescription,
+    uploader: editUploader,
+    file: editImageFile,
+    secretCode,
+  });
+
+  if (!result.ok) {
+    alert(result.error || "Gagal menyimpan perubahan");
+    setEditLoading(false);
+    return;
+  }
+
+  alert("Berhasil disimpan!");
+  updateMemoryState(result.data);
+  setShowEditModal(false);
+  setEditLoading(false);
+};
 
   if (loading)
     return <p className="text-gray-200 p-6 max-w-3xl mx-auto">Memuat Detail Project...</p>;
