@@ -21,19 +21,19 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
     description:
-      "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
+      "Dokumentasi Project Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
 
     openGraph: {
       title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
       description:
-        "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan.",
+        "Dokumentasi Project Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
       type: "website",
       url: "https://cv-bangunan-cerdas-indonesia.vercel.app/project",
       images: [
         {
           url: ogImage,
-          width: 600,
-          height: 315,
+          width: 800,
+          height: 420,
         },
       ],
     },
@@ -42,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
       description:
-        "Dokumentasi Project CV. Bangunan Cerdas Indonesia dalam satu galeri elegan.",
+        "Dokumentasi Project Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
       images: [ogImage],
     },
   };

@@ -21,13 +21,9 @@ export async function GET(req: NextRequest) {
       searchParams.get("subtitle") ||
       "Smart Project Wall | Galeri Pemasaran Digital Interaktif";
 
-    // ✅ AMAN DI DEV & PRODUKSI
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL || req.nextUrl.origin;
 
-    // ================================
-    // 3️⃣ AMBIL MEMORY ASLI DARI SUPABASE
-    // ================================
     let finalMemories: FinalMemory[] = [];
 
     try {
@@ -58,9 +54,6 @@ export async function GET(req: NextRequest) {
       console.warn("OG Home: Supabase fetch failed, using fallback.");
     }
 
-    // ================================
-    // 4️⃣ FALLBACK
-    // ================================
     if (finalMemories.length === 0) {
       finalMemories = [
         { id: "7271ef9e-1437-4927-b37b-a455ceebc547", title: "Project A" },
@@ -71,38 +64,35 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // ================================
-    // 5️⃣ RENDER OG IMAGE
-    // ================================
     return new ImageResponse(
       (
         <div
           style={{
-            width: 1200,
-            height: 630,
+            width: 800,
+            height: 420,
             display: "flex",
             flexDirection: "column",
             fontFamily: "Inter, sans-serif",
             background: "#0f172a",
             color: "white",
-            padding: 30,
+            padding: 20,
           }}
         >
           {/* HEADER */}
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <img
-              src={`${baseUrl}/icon.png`} // ✅ PNG
-              width={80}
-              height={80}
+              src={`${baseUrl}/icon.png`}
+              width={54}
+              height={54}
               alt="Icon"
             />
-            <h1 style={{ fontSize: 64, fontWeight: 700, margin: 0 }}>
+            <h1 style={{ fontSize: 42, fontWeight: 700, margin: 0 }}>
               {title}
             </h1>
           </div>
 
           {/* SUBTITLE */}
-          <p style={{ fontSize: 32, color: "#cbd5e1", marginTop: 10 }}>
+          <p style={{ fontSize: 22, color: "#cbd5e1", marginTop: 6 }}>
             {subtitle}
           </p>
 
@@ -110,8 +100,8 @@ export async function GET(req: NextRequest) {
           <div
             style={{
               display: "flex",
-              gap: 16,
-              marginTop: 20,
+              gap: 12,
+              marginTop: 14,
             }}
           >
             {finalMemories.map((memory) => (
@@ -123,23 +113,22 @@ export async function GET(req: NextRequest) {
                   flexDirection: "column",
                   alignItems: "center",
                   background: "#1e293b",
-                  borderRadius: 16,
-                  padding: 12,
+                  borderRadius: 12,
+                  padding: 8,
                 }}
               >
-                {/* ✅ WAJIB PAKAI OG-PNG */}
                 <img
                   src={`${baseUrl}/api/og-png/${memory.id}`}
-                  width={200}
-                  height={266}
-                  style={{ borderRadius: 12, objectFit: "cover" }}
+                  width={133}
+                  height={177}
+                  style={{ borderRadius: 10, objectFit: "cover" }}
                   alt={memory.title}
                 />
 
                 <p
                   style={{
-                    marginTop: 8,
-                    fontSize: 20,
+                    marginTop: 6,
+                    fontSize: 14,
                     fontWeight: 500,
                     textAlign: "center",
                     color: "#f1f5f9",
@@ -154,18 +143,18 @@ export async function GET(req: NextRequest) {
           {/* FOOTER */}
           <div
             style={{
-              marginTop: "auto",   // ✅ ini kunci utamanya
-              paddingTop: 16,      // optional, beri jarak dari konten
+              marginTop: "auto",
+              paddingTop: 10,
               textAlign: "center",
               color: "#64748b",
-              fontSize: 20,
+              fontSize: 14,
             }}
           >
             © 2025 CV. Bangunan Cerdas Indonesia
           </div>
         </div>
       ),
-      { width: 1200, height: 630 }
+      { width: 800, height: 420 }
     );
   } catch (err) {
     console.error("OG generation failed:", err);
