@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 /* ================================
    ⭐ Import Geist Sans (static weights)
@@ -122,6 +123,23 @@ export default function RootLayout({
         "
       >
         {/* ✅ Scroll hanya di BODY, bukan di div lain */}
+      
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=G-2YMPX617GW`}
+        strategy="afterInteractive"
+      />
+
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-2YMPX617GW', {
+            page_path: window.location.pathname,
+          });
+        `}
+      </Script>
+
         <Navbar />
 
         <main className="pt-16 pb-10 px-0 sm:py-16 sm:px-0 md:py-16 md:px-0 lg:py-20 lg:px-0">
