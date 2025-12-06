@@ -49,7 +49,7 @@ export async function generateMetadata(
       openGraph: {
         title: mem.title,
         description: mem.description || "CV. Bangunan Cerdas Indonesia",
-        url: `https://cv-bangunan-cerdas-indonesia.vercel.app/project/${mem.id}`,
+        url: `https://bangunancerdas.web.id/project/${mem.id}`,
         siteName: "Smart Project Wall",
         locale: "id_ID",
         type: "article",

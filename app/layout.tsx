@@ -24,7 +24,7 @@ export const viewport: Viewport = {
    📌 Metadata default untuk halaman statis
    ================================ */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cv-bangunan-cerdas-indonesia.vercel.app/"),
+  metadataBase: new URL("https://bangunancerdas.web.id/"),
   title: "CV. Bangunan Cerdas Indonesia",
   description: "Smart Project Wall untuk menyimpan Project berharga Kami",
 

@@ -1,8 +1,0 @@
-# robots.txt untuk CV. Bangunan Cerdas Indonesia
-# Semua crawler diperbolehkan mengakses semua halaman
-
-User-agent: *
-Disallow:
-
-# Sitemap otomatis dari API route
-Sitemap: https://cv-bangunan-cerdas-indonesia.vercel.app/api/sitemap

@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Dokumentasi Project Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
       type: "website",
-      url: "https://cv-bangunan-cerdas-indonesia.vercel.app/project",
+      url: "https://bangunancerdas.web.id/project",
       images: [
         {
           url: ogImage,
