@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: "/about",
     images: [
       {
-        url: "/images/og-about.png",
+        url: "https://bangunancerdas.web.id/og/og-about.png",
         width: 1200,
         height: 630,
         alt: "Tentang Kami - CV. Bangunan Cerdas Indonesia",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Tentang Kami | CV. Bangunan Cerdas Indonesia",
     description:
       "CV. Bangunan Cerdas Indonesia — Platform Galeri Pemasaran Digital Interaktif untuk menampilkan, menyimpan, dan mendokumentasikan berbagai Project Smart Building.",
-    images: ["/images/og-about.png"],
+    images: ["https://bangunancerdas.web.id/og/og-about.png"],
   },
 
   alternates: {

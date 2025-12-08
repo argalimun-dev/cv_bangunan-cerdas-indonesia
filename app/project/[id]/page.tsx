@@ -37,10 +37,10 @@ export async function generateMetadata(
       };
     }
 
-    const ogImageUrl = mem.og_file_name
+    const ogImageUrl =
       mem.og_file_name && mem.og_file_name.startsWith("http")
         ? mem.og_file_name
-        : "/og/default.webp";
+        : "https://bangunancerdas.web.id/og/default.webp";
 
     return {
       title: `${mem.title} | Smart Project Wall`,
@@ -56,8 +56,8 @@ export async function generateMetadata(
         images: [
           {
             url: ogImageUrl,
-            width: 600,
-            height: 315,
+            width: 800,
+            height: 420,
           },
         ],
       },

@@ -6,12 +6,13 @@ export const runtime = "nodejs";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { memoryId: string } }
+  { params }: { params: Promise<{ memoryId: string }> } // ✅ params async
 ) {
   try {
-    const { memoryId } = params;
+    // ✅ FIX UTAMA: params sekarang HARUS di-await (Next.js 15+)
+    const { memoryId } = await params;
 
-    // ✅ ORIGIN AMAN (GANTI BASE_URL)
+    // ✅ ORIGIN AMAN (DINAMIS)
     const origin = req.nextUrl.origin;
 
     // ✅ AMBIL OG WEBP
@@ -33,7 +34,7 @@ export async function GET(
       .png({ quality: 95 })
       .toBuffer();
 
-    // ✅ ✅ FIX UTAMA: Buffer → Uint8Array
+    // ✅ RETURN IMAGE FINAL
     return new NextResponse(new Uint8Array(pngBuffer), {
       status: 200,
       headers: {

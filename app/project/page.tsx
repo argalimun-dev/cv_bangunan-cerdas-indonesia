@@ -13,10 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
     .limit(1)
     .single();
 
-  const ogImage =
+  const ogImageUrl =
     data?.og_file_name && data.og_file_name.startsWith("http")
       ? data.og_file_name
-      : "/images/og-memorylist.png";
+      : "https://bangunancerdas.web.id/og/og-projectlist.png";
 
   return {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://bangunancerdas.web.id/project",
       images: [
         {
-          url: ogImage,
+          url: ogImageUrl,
           width: 800,
           height: 420,
         },
@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
       description:
         "Dokumentasi Project Bangunan Cerdas Indonesia dalam satu galeri elegan. Jelajahi semua Project dengan tampilan modern.",
-      images: [ogImage],
+      images: [ogImageUrl],
     },
   };
 }

@@ -28,6 +28,12 @@ export const metadata: Metadata = {
         height: 630,
         alt: "Smart Project Wall - CV. Bangunan Cerdas Indonesia",
       },
+        {
+        url: "https://bangunancerdas.web.id/og/og-home.png",
+        width: 1200,
+        height: 630,
+        alt: "Smart Project Wall - CV. Bangunan Cerdas Indonesia",
+      },
     ],
   },
 
@@ -36,7 +42,9 @@ export const metadata: Metadata = {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
     description:
       "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
-    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/api/og-home`],
+    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/api/og-home`,
+      "https://bangunancerdas.web.id/og/og-home.png",
+    ],
   },
 
   robots: {

@@ -45,8 +45,7 @@ export default function RightColumn({
           className="
             text-gray-300
             mb-4
-            leading-relaxed
-            text-justify
+            leading-loose
             max-h-[280px] sm:max-h-[320px] md:max-h-[360px] lg:max-h-[400px] xl:max-h-[450px]
             overflow-y-auto
             scrollbar-custom

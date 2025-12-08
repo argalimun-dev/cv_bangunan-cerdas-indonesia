@@ -1,5 +1,4 @@
 // /services/imageProcessor.ts
-
 export class ImageProcessError extends Error {
   constructor(message: string) {
     super(message);

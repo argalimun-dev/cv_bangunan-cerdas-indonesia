@@ -35,8 +35,14 @@ export async function GET(
           const arrayBuffer = await res.arrayBuffer();
 
           finalBuffer = await sharp(Buffer.from(arrayBuffer))
-            .resize({ width: 1200 })
-            .webp({ quality: 82 })
+            .resize({
+              width: 800,          // ✅ DITURUNKAN DARI 1200
+              withoutEnlargement: true, // ✅ Cegah upscaling
+            })
+            .webp({
+              quality: 92,         // ✅ NAIK DARI 82
+              effort: 4,           // ✅ Kompres lebih efisien
+            })
             .toBuffer();
         }
       } catch (err) {

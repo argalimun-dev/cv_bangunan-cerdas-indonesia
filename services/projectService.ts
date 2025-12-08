@@ -1,5 +1,4 @@
 // services/projectService.ts
-
 export interface UpdateMemoryParams {
   id: string;
   title?: string;          // ✅ opsional

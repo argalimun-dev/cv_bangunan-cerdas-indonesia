@@ -6,9 +6,17 @@ export async function generateOgImageToSupabase(
   inputBuffer: Buffer,
   memoryId: string
 ) {
+  if (!inputBuffer || inputBuffer.length === 0) {
+    throw new Error("Buffer gambar kosong");
+  }
+
   const ogBuffer = await sharp(inputBuffer)
-    .resize({ width: 600 })
-    .webp({ quality: 80 })
+    .rotate() // ✅ perbaiki orientasi dari EXIF
+    .resize({
+      width: 800,
+      withoutEnlargement: true, // ✅ jangan upsize gambar kecil
+    })
+    .webp({ quality: 92 })
     .toBuffer();
 
   const ogPath = `og/${memoryId}.webp`;
@@ -18,6 +26,7 @@ export async function generateOgImageToSupabase(
     .upload(ogPath, ogBuffer, {
       contentType: "image/webp",
       upsert: true,
+      cacheControl: "3600", // ✅ aman untuk CDN
     });
 
   if (error) throw error;
@@ -26,5 +35,6 @@ export async function generateOgImageToSupabase(
     .from("images")
     .getPublicUrl(ogPath);
 
-  return data.publicUrl;
+  // ✅ cache busting OG (ANTI CACHE SOSMED)
+  return `${data.publicUrl}?v=${Date.now()}`;
 }
