@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     shortcut: "https://bangunancerdas.web.id/icons/favicon.ico",
   },
 
-  manifest: "/manifest.webmanifest",
+  manifest: "https://bangunancerdas.web.id/manifest.webmanifest",
 
   openGraph: {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
