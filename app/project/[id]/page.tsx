@@ -40,7 +40,7 @@ export async function generateMetadata(
     const ogImageUrl =
       mem.og_file_name && mem.og_file_name.startsWith("http")
         ? mem.og_file_name
-        : "https://bangunancerdas.web.id/og/default.webp";
+        : "https://bangunancerdas.web.id/og/og-home.webp";
 
     return {
       title: `${mem.title} | Smart Project Wall`,

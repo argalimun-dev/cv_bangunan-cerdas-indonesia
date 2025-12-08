@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImageUrl =
     data?.og_file_name && data.og_file_name.startsWith("http")
       ? data.og_file_name
-      : "https://bangunancerdas.web.id/og/og-projectlist.png";
+      : "https://bangunancerdas.web.id/og/og-projectlist.webp";
 
   return {
     title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",

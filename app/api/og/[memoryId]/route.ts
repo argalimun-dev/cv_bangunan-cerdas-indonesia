@@ -76,7 +76,7 @@ export async function GET(
       process.cwd(),
       "public",
       "og",
-      "default.webp"
+      "og-home.webp"
     );
 
     if (fs.existsSync(defaultPath)) {

@@ -27,32 +27,40 @@ export const viewport: Viewport = {
    ================================ */
 export const metadata: Metadata = {
   metadataBase: new URL("https://bangunancerdas.web.id/"),
-  title: "CV. Bangunan Cerdas Indonesia",
-  description: "Smart Project Wall untuk menyimpan Project berharga Kami",
+  title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+  description: "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
+
+  keywords: [
+    "CV Bangunan Cerdas Indonesia",
+    "Smart Project Wall",
+    "Galeri Project",
+    "Manajemen Project",
+    "Dokumentasi Proyek",
+  ],
 
   icons: {
     icon: [
       {
-        url: "/icons/favicon.svg",
+        url: "https://bangunancerdas.web.id/icons/favicon.svg",
         type: "image/svg+xml",
       },
       {
-        url: "/icons/favicon-16.png",
+        url: "https://bangunancerdas.web.id/icons/favicon-16.png",
         sizes: "16x16",
         type: "image/png",
       },
       {
-        url: "/icons/favicon-32.png",
+        url: "https://bangunancerdas.web.id/icons/favicon-32.png",
         sizes: "32x32",
         type: "image/png",
       },
       {
-        url: "/icons/favicon-192.png",
+        url: "https://bangunancerdas.web.id/icons/favicon-192.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        url: "/icons/favicon-512.png",
+        url: "https://bangunancerdas.web.id/icons/favicon-512.png",
         sizes: "512x512",
         type: "image/png",
       },
@@ -60,27 +68,27 @@ export const metadata: Metadata = {
 
     apple: [
       {
-        url: "/icons/apple-touch-icon.png",
+        url: "https://bangunancerdas.web.id/icons/apple-touch-icon.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
 
-    shortcut: "/icons/favicon.ico",
+    shortcut: "https://bangunancerdas.web.id/icons/favicon.ico",
   },
 
   manifest: "/manifest.webmanifest",
 
   openGraph: {
-    title: "CV. Bangunan Cerdas Indonesia",
-    description: "Smart Project Wall untuk menyimpan Project berharga Kami",
+    title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+    description: "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
     url: "/", // default homepage
     siteName: "CV. Bangunan Cerdas Indonesia",
     locale: "id_ID",
     type: "website",
     images: [
       {
-        url: "/og/default.webp",
+        url: "https://bangunancerdas.web.id/og/og-home.webp",
         width: 1200,
         height: 630,
       },
@@ -89,9 +97,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "CV. Bangunan Cerdas Indonesia",
-    description: "Smart Project Wall untuk menyimpan Project berharga Kami",
-    images: ["/og/default.webp"],
+    title: "Smart Project Wall | CV. Bangunan Cerdas Indonesia",
+    description: "Platform Galeri Pemasaran Digital. Simpan, kelola, dan tampilkan setiap Project dengan tampilan modern.",
+    images: ["https://bangunancerdas.web.id/og/og-home.webp"],
     site: "@CVBangunanCerdas",
     creator: "@CVBangunanCerdas",
   },
@@ -99,6 +107,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+
+  alternates: {
+    canonical: "/",
   },
 };
 
