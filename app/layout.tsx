@@ -39,42 +39,28 @@ export const metadata: Metadata = {
   ],
 
   icons: {
+    // ⭐ ICON UTAMA — YANG DIBACA GOOGLE SEARCH
     icon: [
       {
-        url: "https://bangunancerdas.web.id/icons/favicon.svg",
-        type: "image/svg+xml",
+        url: "/favicon.ico",
+        sizes: "48x48",
+        type: "image/x-icon",
       },
       {
-        url: "https://bangunancerdas.web.id/icons/favicon-16.png",
-        sizes: "16x16",
-        type: "image/png",
-      },
-      {
-        url: "https://bangunancerdas.web.id/icons/favicon-32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "https://bangunancerdas.web.id/icons/favicon-192.png",
+        url: "/icons/favicon-192.png",
         sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        url: "https://bangunancerdas.web.id/icons/favicon-512.png",
-        sizes: "512x512",
         type: "image/png",
       },
     ],
 
+    // 🍎 Apple Touch Icon (iOS)
     apple: [
       {
-        url: "https://bangunancerdas.web.id/icons/apple-touch-icon.png",
+        url: "/icons/apple-touch-icon.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
-
-    shortcut: "https://bangunancerdas.web.id/icons/favicon.ico",
   },
 
   manifest: "https://bangunancerdas.web.id/manifest.webmanifest",
