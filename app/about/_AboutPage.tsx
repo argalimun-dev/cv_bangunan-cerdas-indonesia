@@ -50,16 +50,16 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   const teamMembers = [
     {
-      name: "Arga Bharata",
-      phone: "089680858462",
-      waLink: "https://wa.me/6289680858462",
-      email: "arga.limun@gmail.com",
+      name: "Alamsyah Rahmatullah Ramadhani",
+      phone: "089614285254",
+      waLink: "https://wa.me/6289614285254",
+      email: "alamsyahrr50@gmail.com",
       role: "Marketing & Administrator",
     },
     {
-      name: "Tim CV. Bangunan Cerdas Indonesia",
-      phone: null,
-      waLink: null,
+      name: "Tim CV. Bangunan Cerdas Indonesia - Koor. Arga Bharata",
+      phone: "089680858462",
+      waLink: "https://wa.me/6289680858462",
       email: null,
       role: "Desain & Instalatur",
     },
@@ -127,6 +127,7 @@ export default function AboutPage() {
             {teamMembers.map((member, idx) => {
               let icon = "👨🏽‍💼🤝"; // default
               if (!member.phone && !member.email) icon = "🏗️";
+              else if (member.phone && !member.email) icon = "🏗️";
               else if (!member.phone && member.email) icon = "👨🏽‍💻💡";
 
               return (

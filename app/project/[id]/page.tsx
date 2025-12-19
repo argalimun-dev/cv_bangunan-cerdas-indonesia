@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import { supabaseServer } from "@/lib/supabaseServer";
 import ProjectDetailPage from "./_ProjectDetailPage";
+import { slugify } from "@/utils/slugify";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -84,5 +86,17 @@ export async function generateMetadata(
 // ============================
 export default async function Page(props: PageProps) {
   const params = await props.params; // ✅ WAJIB await
-  return <ProjectDetailPage id={params.id} />;
+  const memoryId = params.id;
+
+  const { data: mem } = await supabaseServer
+    .from("memories")
+    .select("title")
+    .eq("id", memoryId)
+    .single();
+
+  if (!mem) {
+    redirect("/project");
+  }
+
+  redirect(`/project/${memoryId}/${slugify(mem.title)}`);
 }

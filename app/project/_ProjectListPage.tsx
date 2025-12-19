@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { slugify } from "@/utils/slugify";
 
 interface Memory {
   id: number;
@@ -64,7 +65,7 @@ export default function ProjectListPage({
           <section className="w-full px-3 sm:px-6 lg:px-10 pt-6 pb-10">
             <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 w-full">
               {memories.map((memory) => (
-                <Link key={memory.id} href={`/project/${memory.id}`}>
+                <Link key={memory.id} href={`/project/${memory.id}/${slugify(memory.title)}`}>
                   <div className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-lg bg-transparent border border-gray-700 hover:border-blue-400/70 transition-all duration-300">
                     <img
                       src={memory.image_url}
